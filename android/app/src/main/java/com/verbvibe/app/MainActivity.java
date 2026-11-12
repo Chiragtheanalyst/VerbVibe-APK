@@ -1,4 +1,4 @@
-﻿package com.verbvibe.app;
+package com.verbvibe.app;
 
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
