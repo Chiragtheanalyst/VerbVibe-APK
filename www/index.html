@@ -1,9 +1,52 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
+<script>
+(function() {
+  if (window.AndroidTTS) {
+    let activeUtterance = null;
+    window.__onNativeTTSBoundary = function(start, end) {
+      if (activeUtterance && typeof activeUtterance.onboundary === 'function') {
+        activeUtterance.onboundary({ charIndex: start, charLength: end - start, name: 'word' });
+      }
+    };
+    window.__onNativeTTSEnd = function() {
+      if (activeUtterance && typeof activeUtterance.onend === 'function') {
+        activeUtterance.onend();
+      }
+      activeUtterance = null;
+    };
+    const nativeSynth = {
+      speaking: false,
+      pending: false,
+      paused: false,
+      getVoices: function() {
+        return [{ name: 'Indian English (Android Native)', lang: 'en-IN', default: true, localService: true, voiceURI: 'android-en-in' }];
+      },
+      speak: function(utterance) {
+        activeUtterance = utterance;
+        const rate = utterance.rate || 0.82;
+        const pitch = utterance.pitch || 1.1;
+        window.AndroidTTS.speak(String(utterance.text || ''), rate, pitch);
+      },
+      cancel: function() {
+        activeUtterance = null;
+        window.AndroidTTS.stop();
+      },
+      pause: function() { window.AndroidTTS.stop(); },
+      resume: function() {}
+    };
+    try {
+      Object.defineProperty(window, 'speechSynthesis', { value: nativeSynth, configurable: true });
+    } catch (e) {
+      window.speechSynthesis = nativeSynth;
+    }
+  }
+})();
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>VerbVibe: Electric Arcade — Action Verbs for Ages 7–14</title>
+  <title>VerbVibe: Electric Arcade â€” Action Verbs for Ages 7â€“14</title>
   <link rel="icon" type="image/png" href="./assets/logo.png" />
   
   <!-- Typography: Outfit for crisp arcade legibility -->
@@ -512,7 +555,7 @@
     id: 'kick',
     verb: 'Kick',
     videoUrl: './assets/videos/kick.mp4',
-    phonetic: '/kɪk/',
+    phonetic: '/kÉªk/',
     category: 'Sports',
     definition: 'To strike out strongly with your foot to propel an object forward!',
     forms: { base: 'kick', past: 'kicked', continuous: 'kicking' },
@@ -523,13 +566,13 @@
     },
     highlightWords: { base: 'kicks', past: 'kicked', continuous: 'kicking' },
     accentColor: '#00E5FF',
-    tag: '⚽ Sports'
+    tag: 'âš½ Sports'
   },
   {
     id: 'jump',
     verb: 'Jump',
     videoUrl: './assets/videos/jump.mp4',
-    phonetic: '/dʒʌmp/',
+    phonetic: '/dÊ’ÊŒmp/',
     category: 'Sports',
     definition: 'To push yourself high into the air using the power of your legs!',
     forms: { base: 'jump', past: 'jumped', continuous: 'jumping' },
@@ -540,13 +583,13 @@
     },
     highlightWords: { base: 'jumps', past: 'jumped', continuous: 'jumping' },
     accentColor: '#00E676',
-    tag: '🏃 Motion'
+    tag: 'ðŸƒ Motion'
   },
   {
     id: 'splash',
     verb: 'Splash',
     videoUrl: './assets/videos/splash.mp4',
-    phonetic: '/splæʃ/',
+    phonetic: '/splÃ¦Êƒ/',
     category: 'Daily',
     definition: 'To cause liquid to scatter and fly into sparkling droplets!',
     forms: { base: 'splash', past: 'splashed', continuous: 'splashing' },
@@ -557,13 +600,13 @@
     },
     highlightWords: { base: 'splash', past: 'splashed', continuous: 'splashing' },
     accentColor: '#00E5FF',
-    tag: '💧 Water'
+    tag: 'ðŸ’§ Water'
   },
   {
     id: 'climb',
     verb: 'Climb',
     videoUrl: './assets/videos/climb.mp4',
-    phonetic: '/klaɪm/',
+    phonetic: '/klaÉªm/',
     category: 'Sports',
     definition: 'To ascend toward the top of a peak using hands and feet!',
     forms: { base: 'climb', past: 'climbed', continuous: 'climbing' },
@@ -574,13 +617,13 @@
     },
     highlightWords: { base: 'climbs', past: 'climbed', continuous: 'climbing' },
     accentColor: '#FFB300',
-    tag: '🧗 Adventure'
+    tag: 'ðŸ§— Adventure'
   },
   {
     id: 'paint',
     verb: 'Paint',
     videoUrl: './assets/videos/paint.mp4',
-    phonetic: '/peɪnt/',
+    phonetic: '/peÉªnt/',
     category: 'Daily',
     definition: 'To apply radiant colors across a canvas to create vivid imagery!',
     forms: { base: 'paint', past: 'painted', continuous: 'painting' },
@@ -591,13 +634,13 @@
     },
     highlightWords: { base: 'paints', past: 'painted', continuous: 'painting' },
     accentColor: '#FF1744',
-    tag: '🎨 Creative'
+    tag: 'ðŸŽ¨ Creative'
   },
   {
     id: 'catch',
     verb: 'Catch',
     videoUrl: './assets/videos/catch.mp4',
-    phonetic: '/kætʃ/',
+    phonetic: '/kÃ¦tÊƒ/',
     category: 'Sports',
     definition: 'To seize and hold an airborne object before it hits the turf!',
     forms: { base: 'catch', past: 'caught', continuous: 'catching' },
@@ -608,13 +651,13 @@
     },
     highlightWords: { base: 'catches', past: 'caught', continuous: 'catching' },
     accentColor: '#00E676',
-    tag: '⚾ Reflexes'
+    tag: 'âš¾ Reflexes'
   },
   {
     id: 'balance',
     verb: 'Balance',
     videoUrl: './assets/videos/balance.mp4',
-    phonetic: '/ˈbæl.əns/',
+    phonetic: '/ËˆbÃ¦l.É™ns/',
     category: 'Sports',
     definition: 'To keep steady and upright without tipping or swaying off course!',
     forms: { base: 'balance', past: 'balanced', continuous: 'balancing' },
@@ -625,13 +668,13 @@
     },
     highlightWords: { base: 'balances', past: 'balanced', continuous: 'balancing' },
     accentColor: '#00E5FF',
-    tag: '🤸 Gymnastics'
+    tag: 'ðŸ¤¸ Gymnastics'
   },
   {
     id: 'whisper',
     verb: 'Whisper',
     videoUrl: './assets/videos/whisper.mp4',
-    phonetic: '/ˈwɪs.pɚ/',
+    phonetic: '/ËˆwÉªs.pÉš/',
     category: 'Communication',
     definition: 'To speak with delicate quiet breath without vocal cord vibration!',
     forms: { base: 'whisper', past: 'whispered', continuous: 'whispering' },
@@ -642,13 +685,13 @@
     },
     highlightWords: { base: 'whispers', past: 'whispered', continuous: 'whispering' },
     accentColor: '#7C4DFF',
-    tag: '🤫 Voice'
+    tag: 'ðŸ¤« Voice'
   },
   {
     id: 'observe',
     verb: 'Observe',
     videoUrl: './assets/videos/observe.mp4',
-    phonetic: '/əbˈzɝːv/',
+    phonetic: '/É™bËˆzÉËv/',
     category: 'Science',
     definition: 'To inspect keenly with scientific attention to discover details!',
     forms: { base: 'observe', past: 'observed', continuous: 'observing' },
@@ -659,13 +702,13 @@
     },
     highlightWords: { base: 'observes', past: 'observed', continuous: 'observing' },
     accentColor: '#00E5FF',
-    tag: '🔭 Science'
+    tag: 'ðŸ”­ Science'
   },
   {
     id: 'assemble',
     verb: 'Assemble',
     videoUrl: './assets/videos/assemble.mp4',
-    phonetic: '/əˈsɛm.bəl/',
+    phonetic: '/É™ËˆsÉ›m.bÉ™l/',
     category: 'Science',
     definition: 'To connect and build multiple components into a working mechanism!',
     forms: { base: 'assemble', past: 'assembled', continuous: 'assembling' },
@@ -676,13 +719,13 @@
     },
     highlightWords: { base: 'assembles', past: 'assembled', continuous: 'assembling' },
     accentColor: '#FFB300',
-    tag: '🤖 Robotics'
+    tag: 'ðŸ¤– Robotics'
   },
   {
     id: 'maneuver',
     verb: 'Maneuver',
     videoUrl: './assets/videos/maneuver.mp4',
-    phonetic: '/məˈnuː.vɚ/',
+    phonetic: '/mÉ™ËˆnuË.vÉš/',
     category: 'Sports',
     definition: 'To guide and steer with expert control around sharp obstacles!',
     forms: { base: 'maneuver', past: 'maneuvered', continuous: 'maneuvering' },
@@ -693,13 +736,13 @@
     },
     highlightWords: { base: 'maneuvers', past: 'maneuvered', continuous: 'maneuvering' },
     accentColor: '#FF1744',
-    tag: '🛸 Flight'
+    tag: 'ðŸ›¸ Flight'
   },
   {
     id: 'accelerate',
     verb: 'Accelerate',
     videoUrl: './assets/videos/accelerate.mp4',
-    phonetic: '/əkˈsɛl.ə.reɪt/',
+    phonetic: '/É™kËˆsÉ›l.É™.reÉªt/',
     category: 'Science',
     definition: 'To increase speed rapidly and blast forward with massive thrust!',
     forms: { base: 'accelerate', past: 'accelerated', continuous: 'accelerating' },
@@ -710,14 +753,14 @@
     },
     highlightWords: { base: 'accelerates', past: 'accelerated', continuous: 'accelerating' },
     accentColor: '#00E676',
-    tag: '🚀 Velocity'
+    tag: 'ðŸš€ Velocity'
   },
   // ==================== 30 EASY DAY-TO-DAY ACTION VERBS ====================
   {
     id: 'eat',
     verb: 'Eat',
     videoUrl: './assets/videos/eat.mp4',
-    phonetic: '/iːt/',
+    phonetic: '/iËt/',
     category: 'Daily',
     definition: 'To put food into your mouth, chew, and swallow to get energy!',
     forms: { base: 'eat', past: 'ate', continuous: 'eating' },
@@ -728,13 +771,13 @@
     },
     highlightWords: { base: 'eats', past: 'ate', continuous: 'eating' },
     accentColor: '#FFB300',
-    tag: '🍽️ Daily'
+    tag: 'ðŸ½ï¸ Daily'
   },
   {
     id: 'sleep',
     verb: 'Sleep',
     videoUrl: './assets/videos/sleep.mp4',
-    phonetic: '/sliːp/',
+    phonetic: '/sliËp/',
     category: 'Daily',
     definition: 'To rest your body and mind by closing your eyes and drifting off!',
     forms: { base: 'sleep', past: 'slept', continuous: 'sleeping' },
@@ -745,13 +788,13 @@
     },
     highlightWords: { base: 'sleeps', past: 'slept', continuous: 'sleeping' },
     accentColor: '#7C4DFF',
-    tag: '😴 Daily'
+    tag: 'ðŸ˜´ Daily'
   },
   {
     id: 'run',
     verb: 'Run',
     videoUrl: './assets/videos/run.mp4',
-    phonetic: '/rʌn/',
+    phonetic: '/rÊŒn/',
     category: 'Daily',
     definition: 'To move fast on your feet, much faster than walking!',
     forms: { base: 'run', past: 'ran', continuous: 'running' },
@@ -762,13 +805,13 @@
     },
     highlightWords: { base: 'runs', past: 'ran', continuous: 'running' },
     accentColor: '#00E5FF',
-    tag: '🏃 Daily'
+    tag: 'ðŸƒ Daily'
   },
   {
     id: 'walk',
     verb: 'Walk',
     videoUrl: './assets/videos/walk.mp4',
-    phonetic: '/wɔːk/',
+    phonetic: '/wÉ”Ëk/',
     category: 'Daily',
     definition: 'To move forward by putting one foot in front of the other!',
     forms: { base: 'walk', past: 'walked', continuous: 'walking' },
@@ -779,13 +822,13 @@
     },
     highlightWords: { base: 'walks', past: 'walked', continuous: 'walking' },
     accentColor: '#00E676',
-    tag: '🚶 Daily'
+    tag: 'ðŸš¶ Daily'
   },
   {
     id: 'wash',
     verb: 'Wash',
     videoUrl: './assets/videos/wash.mp4',
-    phonetic: '/wɒʃ/',
+    phonetic: '/wÉ’Êƒ/',
     category: 'Daily',
     definition: 'To clean something with water and soap to make it fresh and germ-free!',
     forms: { base: 'wash', past: 'washed', continuous: 'washing' },
@@ -796,13 +839,13 @@
     },
     highlightWords: { base: 'washes', past: 'washed', continuous: 'washing' },
     accentColor: '#00E5FF',
-    tag: '🧼 Daily'
+    tag: 'ðŸ§¼ Daily'
   },
   {
     id: 'cook',
     verb: 'Cook',
     videoUrl: './assets/videos/cook.mp4',
-    phonetic: '/kʊk/',
+    phonetic: '/kÊŠk/',
     category: 'Daily',
     definition: 'To prepare food using heat to make it delicious and safe to eat!',
     forms: { base: 'cook', past: 'cooked', continuous: 'cooking' },
@@ -813,13 +856,13 @@
     },
     highlightWords: { base: 'cooks', past: 'cooked', continuous: 'cooking' },
     accentColor: '#FFB300',
-    tag: '🍳 Daily'
+    tag: 'ðŸ³ Daily'
   },
   {
     id: 'draw',
     verb: 'Draw',
     videoUrl: './assets/videos/draw.mp4',
-    phonetic: '/drɔː/',
+    phonetic: '/drÉ”Ë/',
     category: 'Daily',
     definition: 'To make pictures or shapes using a pen, pencil, or crayon on paper!',
     forms: { base: 'draw', past: 'drew', continuous: 'drawing' },
@@ -830,13 +873,13 @@
     },
     highlightWords: { base: 'draws', past: 'drew', continuous: 'drawing' },
     accentColor: '#FF1744',
-    tag: '✏️ Daily'
+    tag: 'âœï¸ Daily'
   },
   {
     id: 'read',
     verb: 'Read',
     videoUrl: './assets/videos/read.mp4',
-    phonetic: '/riːd/',
+    phonetic: '/riËd/',
     category: 'Daily',
     definition: 'To look at words and understand their meaning by using your eyes and brain!',
     forms: { base: 'read', past: 'read', continuous: 'reading' },
@@ -847,13 +890,13 @@
     },
     highlightWords: { base: 'reads', past: 'read', continuous: 'reading' },
     accentColor: '#7C4DFF',
-    tag: '📖 Daily'
+    tag: 'ðŸ“– Daily'
   },
   {
     id: 'write',
     verb: 'Write',
     videoUrl: './assets/videos/write.mp4',
-    phonetic: '/raɪt/',
+    phonetic: '/raÉªt/',
     category: 'Daily',
     definition: 'To form letters and words on paper to share your thoughts and ideas!',
     forms: { base: 'write', past: 'wrote', continuous: 'writing' },
@@ -864,13 +907,13 @@
     },
     highlightWords: { base: 'writes', past: 'wrote', continuous: 'writing' },
     accentColor: '#00E5FF',
-    tag: '✍️ Daily'
+    tag: 'âœï¸ Daily'
   },
   {
     id: 'sing',
     verb: 'Sing',
     videoUrl: './assets/videos/sing.mp4',
-    phonetic: '/sɪŋ/',
+    phonetic: '/sÉªÅ‹/',
     category: 'Communication',
     definition: 'To make music with your voice by moving air through your vocal cords!',
     forms: { base: 'sing', past: 'sang', continuous: 'singing' },
@@ -881,13 +924,13 @@
     },
     highlightWords: { base: 'sings', past: 'sang', continuous: 'singing' },
     accentColor: '#FF1744',
-    tag: '🎵 Voice'
+    tag: 'ðŸŽµ Voice'
   },
   {
     id: 'dance',
     verb: 'Dance',
     videoUrl: './assets/videos/dance.mp4',
-    phonetic: '/dɑːns/',
+    phonetic: '/dÉ‘Ëns/',
     category: 'Daily',
     definition: 'To move your body rhythmically to music in a fun and expressive way!',
     forms: { base: 'dance', past: 'danced', continuous: 'dancing' },
@@ -898,13 +941,13 @@
     },
     highlightWords: { base: 'dances', past: 'danced', continuous: 'dancing' },
     accentColor: '#7C4DFF',
-    tag: '💃 Daily'
+    tag: 'ðŸ’ƒ Daily'
   },
   {
     id: 'smile',
     verb: 'Smile',
     videoUrl: './assets/videos/smile.mp4',
-    phonetic: '/smaɪl/',
+    phonetic: '/smaÉªl/',
     category: 'Communication',
     definition: 'To make a happy face by turning the corners of your mouth upward!',
     forms: { base: 'smile', past: 'smiled', continuous: 'smiling' },
@@ -915,13 +958,13 @@
     },
     highlightWords: { base: 'smiles', past: 'smiled', continuous: 'smiling' },
     accentColor: '#FFB300',
-    tag: '😊 Daily'
+    tag: 'ðŸ˜Š Daily'
   },
   {
     id: 'cry',
     verb: 'Cry',
     videoUrl: './assets/videos/cry.mp4',
-    phonetic: '/kraɪ/',
+    phonetic: '/kraÉª/',
     category: 'Communication',
     definition: 'To shed tears from your eyes when you feel sad, hurt, or overwhelmed!',
     forms: { base: 'cry', past: 'cried', continuous: 'crying' },
@@ -932,13 +975,13 @@
     },
     highlightWords: { base: 'cries', past: 'cried', continuous: 'crying' },
     accentColor: '#00E5FF',
-    tag: '😢 Daily'
+    tag: 'ðŸ˜¢ Daily'
   },
   {
     id: 'laugh',
     verb: 'Laugh',
     videoUrl: './assets/videos/laugh.mp4',
-    phonetic: '/lɑːf/',
+    phonetic: '/lÉ‘Ëf/',
     category: 'Communication',
     definition: 'To make a joyful sound with your voice when something is very funny!',
     forms: { base: 'laugh', past: 'laughed', continuous: 'laughing' },
@@ -949,13 +992,13 @@
     },
     highlightWords: { base: 'laughs', past: 'laughed', continuous: 'laughing' },
     accentColor: '#FFB300',
-    tag: '😂 Daily'
+    tag: 'ðŸ˜‚ Daily'
   },
   {
     id: 'sit',
     verb: 'Sit',
     videoUrl: './assets/videos/sit.mp4',
-    phonetic: '/sɪt/',
+    phonetic: '/sÉªt/',
     category: 'Daily',
     definition: 'To rest your body by putting your weight on a chair or the floor!',
     forms: { base: 'sit', past: 'sat', continuous: 'sitting' },
@@ -966,13 +1009,13 @@
     },
     highlightWords: { base: 'sits', past: 'sat', continuous: 'sitting' },
     accentColor: '#7C4DFF',
-    tag: '🪑 Daily'
+    tag: 'ðŸª‘ Daily'
   },
   {
     id: 'stand',
     verb: 'Stand',
     videoUrl: './assets/videos/stand.mp4',
-    phonetic: '/stænd/',
+    phonetic: '/stÃ¦nd/',
     category: 'Daily',
     definition: 'To hold your body upright on your feet without moving forward!',
     forms: { base: 'stand', past: 'stood', continuous: 'standing' },
@@ -983,13 +1026,13 @@
     },
     highlightWords: { base: 'stands', past: 'stood', continuous: 'standing' },
     accentColor: '#00E676',
-    tag: '🧍 Daily'
+    tag: 'ðŸ§ Daily'
   },
   {
     id: 'open',
     verb: 'Open',
     videoUrl: './assets/videos/open.mp4',
-    phonetic: '/ˈəʊ.pən/',
+    phonetic: '/ËˆÉ™ÊŠ.pÉ™n/',
     category: 'Daily',
     definition: 'To move something like a door or box so it is no longer closed or sealed!',
     forms: { base: 'open', past: 'opened', continuous: 'opening' },
@@ -1000,13 +1043,13 @@
     },
     highlightWords: { base: 'opens', past: 'opened', continuous: 'opening' },
     accentColor: '#FFB300',
-    tag: '🎁 Daily'
+    tag: 'ðŸŽ Daily'
   },
   {
     id: 'close',
     verb: 'Close',
     videoUrl: './assets/videos/close.mp4',
-    phonetic: '/kləʊz/',
+    phonetic: '/klÉ™ÊŠz/',
     category: 'Daily',
     definition: 'To move something to block an opening and keep it shut!',
     forms: { base: 'close', past: 'closed', continuous: 'closing' },
@@ -1017,13 +1060,13 @@
     },
     highlightWords: { base: 'closes', past: 'closed', continuous: 'closing' },
     accentColor: '#FF1744',
-    tag: '📕 Daily'
+    tag: 'ðŸ“• Daily'
   },
   {
     id: 'push',
     verb: 'Push',
     videoUrl: './assets/videos/push.mp4',
-    phonetic: '/pʊʃ/',
+    phonetic: '/pÊŠÊƒ/',
     category: 'Daily',
     definition: 'To press or move something forward using your hands or body!',
     forms: { base: 'push', past: 'pushed', continuous: 'pushing' },
@@ -1034,13 +1077,13 @@
     },
     highlightWords: { base: 'pushes', past: 'pushed', continuous: 'pushing' },
     accentColor: '#00E5FF',
-    tag: '💪 Daily'
+    tag: 'ðŸ’ª Daily'
   },
   {
     id: 'pull',
     verb: 'Pull',
     videoUrl: './assets/videos/pull.mp4',
-    phonetic: '/pʊl/',
+    phonetic: '/pÊŠl/',
     category: 'Daily',
     definition: 'To grab something and bring it closer to you with force!',
     forms: { base: 'pull', past: 'pulled', continuous: 'pulling' },
@@ -1051,13 +1094,13 @@
     },
     highlightWords: { base: 'pulls', past: 'pulled', continuous: 'pulling' },
     accentColor: '#00E676',
-    tag: '🐕 Daily'
+    tag: 'ðŸ• Daily'
   },
   {
     id: 'throw',
     verb: 'Throw',
     videoUrl: './assets/videos/throw.mp4',
-    phonetic: '/θrəʊ/',
+    phonetic: '/Î¸rÉ™ÊŠ/',
     category: 'Sports',
     definition: 'To send an object flying through the air by moving your arm fast!',
     forms: { base: 'throw', past: 'threw', continuous: 'throwing' },
@@ -1068,13 +1111,13 @@
     },
     highlightWords: { base: 'throws', past: 'threw', continuous: 'throwing' },
     accentColor: '#FF1744',
-    tag: '⚾ Sports'
+    tag: 'âš¾ Sports'
   },
   {
     id: 'carry',
     verb: 'Carry',
     videoUrl: './assets/videos/carry.mp4',
-    phonetic: '/ˈkær.i/',
+    phonetic: '/ËˆkÃ¦r.i/',
     category: 'Daily',
     definition: 'To hold something and take it with you as you move from place to place!',
     forms: { base: 'carry', past: 'carried', continuous: 'carrying' },
@@ -1085,13 +1128,13 @@
     },
     highlightWords: { base: 'carries', past: 'carried', continuous: 'carrying' },
     accentColor: '#7C4DFF',
-    tag: '🛍️ Daily'
+    tag: 'ðŸ›ï¸ Daily'
   },
   {
     id: 'give',
     verb: 'Give',
     videoUrl: './assets/videos/give.mp4',
-    phonetic: '/ɡɪv/',
+    phonetic: '/É¡Éªv/',
     category: 'Communication',
     definition: 'To hand something over to another person as a gift or to help them!',
     forms: { base: 'give', past: 'gave', continuous: 'giving' },
@@ -1102,13 +1145,13 @@
     },
     highlightWords: { base: 'gives', past: 'gave', continuous: 'giving' },
     accentColor: '#FFB300',
-    tag: '🎁 Daily'
+    tag: 'ðŸŽ Daily'
   },
   {
     id: 'take',
     verb: 'Take',
     videoUrl: './assets/videos/take.mp4',
-    phonetic: '/teɪk/',
+    phonetic: '/teÉªk/',
     category: 'Science',
     definition: 'To reach out and grab something to hold or use it yourself!',
     forms: { base: 'take', past: 'took', continuous: 'taking' },
@@ -1119,13 +1162,13 @@
     },
     highlightWords: { base: 'takes', past: 'took', continuous: 'taking' },
     accentColor: '#00E5FF',
-    tag: '🔬 Science'
+    tag: 'ðŸ”¬ Science'
   },
   {
     id: 'hold',
     verb: 'Hold',
     videoUrl: './assets/videos/hold.mp4',
-    phonetic: '/həʊld/',
+    phonetic: '/hÉ™ÊŠld/',
     category: 'Daily',
     definition: 'To keep something firmly in your hands or arms without dropping it!',
     forms: { base: 'hold', past: 'held', continuous: 'holding' },
@@ -1136,13 +1179,13 @@
     },
     highlightWords: { base: 'holds', past: 'held', continuous: 'holding' },
     accentColor: '#FF1744',
-    tag: '🤲 Daily'
+    tag: 'ðŸ¤² Daily'
   },
   {
     id: 'look',
     verb: 'Look',
     videoUrl: './assets/videos/look.mp4',
-    phonetic: '/lʊk/',
+    phonetic: '/lÊŠk/',
     category: 'Science',
     definition: 'To direct your eyes at something to see and notice it carefully!',
     forms: { base: 'look', past: 'looked', continuous: 'looking' },
@@ -1153,13 +1196,13 @@
     },
     highlightWords: { base: 'looks', past: 'looked', continuous: 'looking' },
     accentColor: '#7C4DFF',
-    tag: '🔭 Science'
+    tag: 'ðŸ”­ Science'
   },
   {
     id: 'listen',
     verb: 'Listen',
     videoUrl: './assets/videos/listen.mp4',
-    phonetic: '/ˈlɪs.ən/',
+    phonetic: '/ËˆlÉªs.É™n/',
     category: 'Communication',
     definition: 'To pay careful attention to sounds or what someone is saying!',
     forms: { base: 'listen', past: 'listened', continuous: 'listening' },
@@ -1170,13 +1213,13 @@
     },
     highlightWords: { base: 'listens', past: 'listened', continuous: 'listening' },
     accentColor: '#00E676',
-    tag: '👂 Voice'
+    tag: 'ðŸ‘‚ Voice'
   },
   {
     id: 'talk',
     verb: 'Talk',
     videoUrl: './assets/videos/talk.mp4',
-    phonetic: '/tɔːk/',
+    phonetic: '/tÉ”Ëk/',
     category: 'Communication',
     definition: 'To use your voice and words to share ideas and feelings with others!',
     forms: { base: 'talk', past: 'talked', continuous: 'talking' },
@@ -1187,13 +1230,13 @@
     },
     highlightWords: { base: 'talks', past: 'talked', continuous: 'talking' },
     accentColor: '#00E5FF',
-    tag: '🗣️ Voice'
+    tag: 'ðŸ—£ï¸ Voice'
   },
   {
     id: 'play',
     verb: 'Play',
     videoUrl: './assets/videos/play.mp4',
-    phonetic: '/pleɪ/',
+    phonetic: '/pleÉª/',
     category: 'Daily',
     definition: 'To have fun by joining in games, sports, or creative activities!',
     forms: { base: 'play', past: 'played', continuous: 'playing' },
@@ -1204,13 +1247,13 @@
     },
     highlightWords: { base: 'plays', past: 'played', continuous: 'playing' },
     accentColor: '#FFB300',
-    tag: '🎮 Daily'
+    tag: 'ðŸŽ® Daily'
   },
   {
     id: 'help',
     verb: 'Help',
     videoUrl: './assets/videos/help.mp4',
-    phonetic: '/hɛlp/',
+    phonetic: '/hÉ›lp/',
     category: 'Daily',
     definition: 'To make things easier for someone by working together or doing something for them!',
     forms: { base: 'help', past: 'helped', continuous: 'helping' },
@@ -1221,7 +1264,7 @@
     },
     highlightWords: { base: 'helps', past: 'helped', continuous: 'helping' },
     accentColor: '#00E676',
-    tag: '🤝 Daily'
+    tag: 'ðŸ¤ Daily'
   },
 
   // ==================== 40 INTERMEDIATE ACTION VERBS ====================
@@ -1229,7 +1272,7 @@
     id: 'stretch',
     verb: 'Stretch',
     videoUrl: './assets/videos/stretch.mp4',
-    phonetic: '/strɛtʃ/',
+    phonetic: '/strÉ›tÊƒ/',
     category: 'Sports',
     definition: 'To extend your body or muscles by pulling them gently to increase flexibility!',
     forms: { base: 'stretch', past: 'stretched', continuous: 'stretching' },
@@ -1240,13 +1283,13 @@
     },
     highlightWords: { base: 'stretches', past: 'stretched', continuous: 'stretching' },
     accentColor: '#00E5FF',
-    tag: '🤸 Sports'
+    tag: 'ðŸ¤¸ Sports'
   },
   {
     id: 'leap',
     verb: 'Leap',
     videoUrl: './assets/videos/leap.mp4',
-    phonetic: '/liːp/',
+    phonetic: '/liËp/',
     category: 'Sports',
     definition: 'To jump far or high through the air with great power and energy!',
     forms: { base: 'leap', past: 'leapt', continuous: 'leaping' },
@@ -1257,13 +1300,13 @@
     },
     highlightWords: { base: 'leaps', past: 'leapt', continuous: 'leaping' },
     accentColor: '#FFB300',
-    tag: '🏃 Sports'
+    tag: 'ðŸƒ Sports'
   },
   {
     id: 'slide',
     verb: 'Slide',
     videoUrl: './assets/videos/slide.mp4',
-    phonetic: '/slaɪd/',
+    phonetic: '/slaÉªd/',
     category: 'Sports',
     definition: 'To move smoothly along a surface while staying close to it!',
     forms: { base: 'slide', past: 'slid', continuous: 'sliding' },
@@ -1274,13 +1317,13 @@
     },
     highlightWords: { base: 'slides', past: 'slid', continuous: 'sliding' },
     accentColor: '#00E676',
-    tag: '⚾ Sports'
+    tag: 'âš¾ Sports'
   },
   {
     id: 'skate',
     verb: 'Skate',
     videoUrl: './assets/videos/skate.mp4',
-    phonetic: '/skeɪt/',
+    phonetic: '/skeÉªt/',
     category: 'Sports',
     definition: 'To glide smoothly across ice or pavement on special blades or wheels!',
     forms: { base: 'skate', past: 'skated', continuous: 'skating' },
@@ -1291,13 +1334,13 @@
     },
     highlightWords: { base: 'skates', past: 'skated', continuous: 'skating' },
     accentColor: '#00E5FF',
-    tag: '⛸️ Sports'
+    tag: 'â›¸ï¸ Sports'
   },
   {
     id: 'swim',
     verb: 'Swim',
     videoUrl: './assets/videos/swim.mp4',
-    phonetic: '/swɪm/',
+    phonetic: '/swÉªm/',
     category: 'Sports',
     definition: 'To move through water by moving your arms and legs in a coordinated way!',
     forms: { base: 'swim', past: 'swam', continuous: 'swimming' },
@@ -1308,13 +1351,13 @@
     },
     highlightWords: { base: 'swims', past: 'swam', continuous: 'swimming' },
     accentColor: '#7C4DFF',
-    tag: '🏊 Sports'
+    tag: 'ðŸŠ Sports'
   },
   {
     id: 'dive',
     verb: 'Dive',
     videoUrl: './assets/videos/dive.mp4',
-    phonetic: '/daɪv/',
+    phonetic: '/daÉªv/',
     category: 'Sports',
     definition: 'To plunge headfirst into water or move downward with speed and control!',
     forms: { base: 'dive', past: 'dived', continuous: 'diving' },
@@ -1325,13 +1368,13 @@
     },
     highlightWords: { base: 'dives', past: 'dived', continuous: 'diving' },
     accentColor: '#00E5FF',
-    tag: '🤿 Sports'
+    tag: 'ðŸ¤¿ Sports'
   },
   {
     id: 'row',
     verb: 'Row',
     videoUrl: './assets/videos/row.mp4',
-    phonetic: '/rəʊ/',
+    phonetic: '/rÉ™ÊŠ/',
     category: 'Sports',
     definition: 'To propel a boat forward through water using long oars!',
     forms: { base: 'row', past: 'rowed', continuous: 'rowing' },
@@ -1342,13 +1385,13 @@
     },
     highlightWords: { base: 'rows', past: 'rowed', continuous: 'rowing' },
     accentColor: '#00E676',
-    tag: '🚣 Sports'
+    tag: 'ðŸš£ Sports'
   },
   {
     id: 'build',
     verb: 'Build',
     videoUrl: './assets/videos/build.mp4',
-    phonetic: '/bɪld/',
+    phonetic: '/bÉªld/',
     category: 'Science',
     definition: 'To put pieces together to make or construct something new and useful!',
     forms: { base: 'build', past: 'built', continuous: 'building' },
@@ -1359,13 +1402,13 @@
     },
     highlightWords: { base: 'builds', past: 'built', continuous: 'building' },
     accentColor: '#FFB300',
-    tag: '🏗️ Science'
+    tag: 'ðŸ—ï¸ Science'
   },
   {
     id: 'fix',
     verb: 'Fix',
     videoUrl: './assets/videos/fix.mp4',
-    phonetic: '/fɪks/',
+    phonetic: '/fÉªks/',
     category: 'Daily',
     definition: 'To repair something that is broken or not working properly!',
     forms: { base: 'fix', past: 'fixed', continuous: 'fixing' },
@@ -1376,13 +1419,13 @@
     },
     highlightWords: { base: 'fixes', past: 'fixed', continuous: 'fixing' },
     accentColor: '#FF1744',
-    tag: '🔧 Daily'
+    tag: 'ðŸ”§ Daily'
   },
   {
     id: 'mix',
     verb: 'Mix',
     videoUrl: './assets/videos/mix.mp4',
-    phonetic: '/mɪks/',
+    phonetic: '/mÉªks/',
     category: 'Science',
     definition: 'To combine different things together by stirring or shaking until blended!',
     forms: { base: 'mix', past: 'mixed', continuous: 'mixing' },
@@ -1393,13 +1436,13 @@
     },
     highlightWords: { base: 'mixes', past: 'mixed', continuous: 'mixing' },
     accentColor: '#7C4DFF',
-    tag: '🧪 Science'
+    tag: 'ðŸ§ª Science'
   },
   {
     id: 'squeeze',
     verb: 'Squeeze',
     videoUrl: './assets/videos/squeeze.mp4',
-    phonetic: '/skwiːz/',
+    phonetic: '/skwiËz/',
     category: 'Daily',
     definition: 'To press something tightly from all sides with your hands or fingers!',
     forms: { base: 'squeeze', past: 'squeezed', continuous: 'squeezing' },
@@ -1410,13 +1453,13 @@
     },
     highlightWords: { base: 'squeezes', past: 'squeezed', continuous: 'squeezing' },
     accentColor: '#FFB300',
-    tag: '🍋 Daily'
+    tag: 'ðŸ‹ Daily'
   },
   {
     id: 'measure',
     verb: 'Measure',
     videoUrl: './assets/videos/measure.mp4',
-    phonetic: '/ˈmɛʒ.ər/',
+    phonetic: '/ËˆmÉ›Ê’.É™r/',
     category: 'Science',
     definition: 'To find out the exact size, weight, or amount of something using a tool!',
     forms: { base: 'measure', past: 'measured', continuous: 'measuring' },
@@ -1427,12 +1470,12 @@
     },
     highlightWords: { base: 'measures', past: 'measured', continuous: 'measuring' },
     accentColor: '#00E5FF',
-    tag: '📏 Science'
+    tag: 'ðŸ“ Science'
   },
   {
     id: 'test',
     verb: 'Test',
-    phonetic: '/tɛst/',
+    phonetic: '/tÉ›st/',
     videoUrl: './assets/videos/test.mp4',
     category: 'Science',
     definition: 'To try something out to see if it works or to find out more about it!',
@@ -1444,13 +1487,13 @@
     },
     highlightWords: { base: 'tests', past: 'tested', continuous: 'testing' },
     accentColor: '#00E676',
-    tag: '🧪 Science'
+    tag: 'ðŸ§ª Science'
   },
   {
     id: 'record',
     verb: 'Record',
     videoUrl: './assets/videos/record.mp4',
-    phonetic: '/rɪˈkɔːd/',
+    phonetic: '/rÉªËˆkÉ”Ëd/',
     category: 'Science',
     definition: 'To capture and save sounds, images, or data for later use!',
     forms: { base: 'record', past: 'recorded', continuous: 'recording' },
@@ -1461,13 +1504,13 @@
     },
     highlightWords: { base: 'records', past: 'recorded', continuous: 'recording' },
     accentColor: '#FF1744',
-    tag: '🎥 Science'
+    tag: 'ðŸŽ¥ Science'
   },
   {
     id: 'search',
     verb: 'Search',
     videoUrl: './assets/videos/search.mp4',
-    phonetic: '/sɜːtʃ/',
+    phonetic: '/sÉœËtÊƒ/',
     category: 'Daily',
     definition: 'To look carefully through many places to find something you need!',
     forms: { base: 'search', past: 'searched', continuous: 'searching' },
@@ -1478,13 +1521,13 @@
     },
     highlightWords: { base: 'searches', past: 'searched', continuous: 'searching' },
     accentColor: '#7C4DFF',
-    tag: '🔍 Daily'
+    tag: 'ðŸ” Daily'
   },
   {
     id: 'collect',
     verb: 'Collect',
     videoUrl: './assets/videos/collect.mp4',
-    phonetic: '/kəˈlɛkt/',
+    phonetic: '/kÉ™ËˆlÉ›kt/',
     category: 'Science',
     definition: 'To gather many things of the same kind together in one place!',
     forms: { base: 'collect', past: 'collected', continuous: 'collecting' },
@@ -1495,13 +1538,13 @@
     },
     highlightWords: { base: 'collects', past: 'collected', continuous: 'collecting' },
     accentColor: '#00E5FF',
-    tag: '🌿 Science'
+    tag: 'ðŸŒ¿ Science'
   },
   {
     id: 'arrange',
     verb: 'Arrange',
     videoUrl: './assets/videos/arrange.mp4',
-    phonetic: '/əˈreɪndʒ/',
+    phonetic: '/É™ËˆreÉªndÊ’/',
     category: 'Daily',
     definition: 'To put things in a neat, organized, or specific order or pattern!',
     forms: { base: 'arrange', past: 'arranged', continuous: 'arranging' },
@@ -1512,13 +1555,13 @@
     },
     highlightWords: { base: 'arranges', past: 'arranged', continuous: 'arranging' },
     accentColor: '#FFB300',
-    tag: '🌸 Daily'
+    tag: 'ðŸŒ¸ Daily'
   },
   {
     id: 'compare',
     verb: 'Compare',
     videoUrl: './assets/videos/compare.mp4',
-    phonetic: '/kəmˈpɛər/',
+    phonetic: '/kÉ™mËˆpÉ›É™r/',
     category: 'Science',
     definition: 'To look at two or more things side by side to find similarities and differences!',
     forms: { base: 'compare', past: 'compared', continuous: 'comparing' },
@@ -1529,13 +1572,13 @@
     },
     highlightWords: { base: 'compares', past: 'compared', continuous: 'comparing' },
     accentColor: '#00E676',
-    tag: '📊 Science'
+    tag: 'ðŸ“Š Science'
   },
   {
     id: 'explain',
     verb: 'Explain',
     videoUrl: './assets/videos/explain.mp4',
-    phonetic: '/ɪkˈspleɪn/',
+    phonetic: '/ÉªkËˆspleÉªn/',
     category: 'Communication',
     definition: 'To make something clear and easy to understand by giving details!',
     forms: { base: 'explain', past: 'explained', continuous: 'explaining' },
@@ -1546,13 +1589,13 @@
     },
     highlightWords: { base: 'explains', past: 'explained', continuous: 'explaining' },
     accentColor: '#7C4DFF',
-    tag: '📢 Voice'
+    tag: 'ðŸ“¢ Voice'
   },
   {
     id: 'describe',
     verb: 'Describe',
     videoUrl: './assets/videos/describe.mp4',
-    phonetic: '/dɪˈskraɪb/',
+    phonetic: '/dÉªËˆskraÉªb/',
     category: 'Communication',
     definition: 'To use words to paint a clear picture of what something is like!',
     forms: { base: 'describe', past: 'described', continuous: 'describing' },
@@ -1563,13 +1606,13 @@
     },
     highlightWords: { base: 'describes', past: 'described', continuous: 'describing' },
     accentColor: '#FF1744',
-    tag: '📝 Voice'
+    tag: 'ðŸ“ Voice'
   },
   {
     id: 'encourage',
     verb: 'Encourage',
     videoUrl: './assets/videos/encourage.mp4',
-    phonetic: '/ɪnˈkʌr.ɪdʒ/',
+    phonetic: '/ÉªnËˆkÊŒr.ÉªdÊ’/',
     category: 'Communication',
     definition: 'To give someone confidence and motivation to keep going and do their best!',
     forms: { base: 'encourage', past: 'encouraged', continuous: 'encouraging' },
@@ -1580,13 +1623,13 @@
     },
     highlightWords: { base: 'encourages', past: 'encouraged', continuous: 'encouraging' },
     accentColor: '#FFB300',
-    tag: '🌟 Voice'
+    tag: 'ðŸŒŸ Voice'
   },
   {
     id: 'challenge',
     verb: 'Challenge',
     videoUrl: './assets/videos/challenge.mp4',
-    phonetic: '/ˈtʃæl.ɪndʒ/',
+    phonetic: '/ËˆtÊƒÃ¦l.ÉªndÊ’/',
     category: 'Sports',
     definition: 'To invite someone to compete or to push yourself to do something difficult!',
     forms: { base: 'challenge', past: 'challenged', continuous: 'challenging' },
@@ -1597,13 +1640,13 @@
     },
     highlightWords: { base: 'challenges', past: 'challenged', continuous: 'challenging' },
     accentColor: '#00E5FF',
-    tag: '⚔️ Sports'
+    tag: 'âš”ï¸ Sports'
   },
   {
     id: 'explore',
     verb: 'Explore',
     videoUrl: './assets/videos/explore.mp4',
-    phonetic: '/ɪkˈsplɔːr/',
+    phonetic: '/ÉªkËˆsplÉ”Ër/',
     category: 'Science',
     definition: 'To travel into unknown places or investigate new ideas with curiosity!',
     forms: { base: 'explore', past: 'explored', continuous: 'exploring' },
@@ -1614,13 +1657,13 @@
     },
     highlightWords: { base: 'explores', past: 'explored', continuous: 'exploring' },
     accentColor: '#00E676',
-    tag: '🗺️ Science'
+    tag: 'ðŸ—ºï¸ Science'
   },
   {
     id: 'navigate',
     verb: 'Navigate',
     videoUrl: './assets/videos/navigate.mp4',
-    phonetic: '/ˈnæv.ɪ.ɡeɪt/',
+    phonetic: '/ËˆnÃ¦v.Éª.É¡eÉªt/',
     category: 'Science',
     definition: 'To find your way through an area using maps, instruments, or your senses!',
     forms: { base: 'navigate', past: 'navigated', continuous: 'navigating' },
@@ -1631,13 +1674,13 @@
     },
     highlightWords: { base: 'navigates', past: 'navigated', continuous: 'navigating' },
     accentColor: '#7C4DFF',
-    tag: '🧭 Science'
+    tag: 'ðŸ§­ Science'
   },
   {
     id: 'calculate',
     verb: 'Calculate',
     videoUrl: './assets/videos/calculate.mp4',
-    phonetic: '/ˈkæl.kjʊ.leɪt/',
+    phonetic: '/ËˆkÃ¦l.kjÊŠ.leÉªt/',
     category: 'Science',
     definition: 'To use math and numbers to work out the exact answer to a problem!',
     forms: { base: 'calculate', past: 'calculated', continuous: 'calculating' },
@@ -1648,13 +1691,13 @@
     },
     highlightWords: { base: 'calculates', past: 'calculated', continuous: 'calculating' },
     accentColor: '#00E5FF',
-    tag: '🔢 Science'
+    tag: 'ðŸ”¢ Science'
   },
   {
     id: 'experiment',
     verb: 'Experiment',
     videoUrl: './assets/videos/experiment.mp4',
-    phonetic: '/ɪkˈspɛr.ɪ.mənt/',
+    phonetic: '/ÉªkËˆspÉ›r.Éª.mÉ™nt/',
     category: 'Science',
     definition: 'To try out a new idea or test a theory to discover something amazing!',
     forms: { base: 'experiment', past: 'experimented', continuous: 'experimenting' },
@@ -1665,13 +1708,13 @@
     },
     highlightWords: { base: 'experiments', past: 'experimented', continuous: 'experimenting' },
     accentColor: '#FF1744',
-    tag: '🧪 Science'
+    tag: 'ðŸ§ª Science'
   },
   {
     id: 'demonstrate',
     verb: 'Demonstrate',
     videoUrl: './assets/videos/demonstrate.mp4',
-    phonetic: '/ˈdɛm.ən.streɪt/',
+    phonetic: '/ËˆdÉ›m.É™n.streÉªt/',
     category: 'Communication',
     definition: 'To show others how to do something by actually doing it in front of them!',
     forms: { base: 'demonstrate', past: 'demonstrated', continuous: 'demonstrating' },
@@ -1682,13 +1725,13 @@
     },
     highlightWords: { base: 'demonstrates', past: 'demonstrated', continuous: 'demonstrating' },
     accentColor: '#FFB300',
-    tag: '📢 Voice'
+    tag: 'ðŸ“¢ Voice'
   },
   {
     id: 'investigate',
     verb: 'Investigate',
     videoUrl: './assets/videos/investigate.mp4',
-    phonetic: '/ɪnˈvɛs.tɪ.ɡeɪt/',
+    phonetic: '/ÉªnËˆvÉ›s.tÉª.É¡eÉªt/',
     category: 'Science',
     definition: 'To look carefully and deeply into something to find the truth or answer!',
     forms: { base: 'investigate', past: 'investigated', continuous: 'investigating' },
@@ -1699,13 +1742,13 @@
     },
     highlightWords: { base: 'investigates', past: 'investigated', continuous: 'investigating' },
     accentColor: '#00E676',
-    tag: '🔍 Science'
+    tag: 'ðŸ” Science'
   },
   {
     id: 'collaborate',
     verb: 'Collaborate',
     videoUrl: './assets/videos/collaborate.mp4',
-    phonetic: '/kəˈlæb.ə.reɪt/',
+    phonetic: '/kÉ™ËˆlÃ¦b.É™.reÉªt/',
     category: 'Communication',
     definition: 'To work together with others as a team to achieve something great!',
     forms: { base: 'collaborate', past: 'collaborated', continuous: 'collaborating' },
@@ -1716,13 +1759,13 @@
     },
     highlightWords: { base: 'collaborates', past: 'collaborated', continuous: 'collaborating' },
     accentColor: '#7C4DFF',
-    tag: '🤝 Voice'
+    tag: 'ðŸ¤ Voice'
   },
   {
     id: 'discover',
     verb: 'Discover',
     videoUrl: './assets/videos/discover.mp4',
-    phonetic: '/dɪˈskʌv.ər/',
+    phonetic: '/dÉªËˆskÊŒv.É™r/',
     category: 'Science',
     definition: 'To find or learn something new that was not known before!',
     forms: { base: 'discover', past: 'discovered', continuous: 'discovering' },
@@ -1733,13 +1776,13 @@
     },
     highlightWords: { base: 'discovers', past: 'discovered', continuous: 'discovering' },
     accentColor: '#00E5FF',
-    tag: '🌍 Science'
+    tag: 'ðŸŒ Science'
   },
   {
     id: 'analyze',
     verb: 'Analyze',
     videoUrl: './assets/videos/analyze.mp4',
-    phonetic: '/ˈæn.ə.laɪz/',
+    phonetic: '/ËˆÃ¦n.É™.laÉªz/',
     category: 'Science',
     definition: 'To study something very carefully by breaking it into parts to understand it!',
     forms: { base: 'analyze', past: 'analyzed', continuous: 'analyzing' },
@@ -1750,13 +1793,13 @@
     },
     highlightWords: { base: 'analyzes', past: 'analyzed', continuous: 'analyzing' },
     accentColor: '#FF1744',
-    tag: '🔬 Science'
+    tag: 'ðŸ”¬ Science'
   },
   {
     id: 'question',
     verb: 'Question',
     videoUrl: './assets/videos/question.mp4',
-    phonetic: '/ˈkwɛs.tʃən/',
+    phonetic: '/ËˆkwÉ›s.tÊƒÉ™n/',
     category: 'Communication',
     definition: 'To ask about something you want to understand or know more about!',
     forms: { base: 'question', past: 'questioned', continuous: 'questioning' },
@@ -1767,13 +1810,13 @@
     },
     highlightWords: { base: 'questions', past: 'questioned', continuous: 'questioning' },
     accentColor: '#FFB300',
-    tag: '❓ Voice'
+    tag: 'â“ Voice'
   },
   {
     id: 'imagine',
     verb: 'Imagine',
     videoUrl: './assets/videos/imagine.mp4',
-    phonetic: '/ɪˈmædʒ.ɪn/',
+    phonetic: '/ÉªËˆmÃ¦dÊ’.Éªn/',
     category: 'Daily',
     definition: 'To form a picture or idea in your mind of something not real or present!',
     forms: { base: 'imagine', past: 'imagined', continuous: 'imagining' },
@@ -1784,13 +1827,13 @@
     },
     highlightWords: { base: 'imagines', past: 'imagined', continuous: 'imagining' },
     accentColor: '#7C4DFF',
-    tag: '🌈 Daily'
+    tag: 'ðŸŒˆ Daily'
   },
   {
     id: 'create',
     verb: 'Create',
     videoUrl: './assets/videos/create.mp4',
-    phonetic: '/kriˈeɪt/',
+    phonetic: '/kriËˆeÉªt/',
     category: 'Daily',
     definition: 'To make something new and original that did not exist before!',
     forms: { base: 'create', past: 'created', continuous: 'creating' },
@@ -1801,13 +1844,13 @@
     },
     highlightWords: { base: 'creates', past: 'created', continuous: 'creating' },
     accentColor: '#00E5FF',
-    tag: '✨ Daily'
+    tag: 'âœ¨ Daily'
   },
   {
     id: 'transform',
     verb: 'Transform',
     videoUrl: './assets/videos/transform.mp4',
-    phonetic: '/trænsˈfɔːm/',
+    phonetic: '/trÃ¦nsËˆfÉ”Ëm/',
     category: 'Science',
     definition: 'To change something completely into a very different form or shape!',
     forms: { base: 'transform', past: 'transformed', continuous: 'transforming' },
@@ -1818,13 +1861,13 @@
     },
     highlightWords: { base: 'transforms', past: 'transformed', continuous: 'transforming' },
     accentColor: '#FF1744',
-    tag: '🦋 Science'
+    tag: 'ðŸ¦‹ Science'
   },
   {
     id: 'connect',
     verb: 'Connect',
     videoUrl: './assets/videos/connect.mp4',
-    phonetic: '/kəˈnɛkt/',
+    phonetic: '/kÉ™ËˆnÉ›kt/',
     category: 'Science',
     definition: 'To join two or more things together so they work or link to each other!',
     forms: { base: 'connect', past: 'connected', continuous: 'connecting' },
@@ -1835,13 +1878,13 @@
     },
     highlightWords: { base: 'connects', past: 'connected', continuous: 'connecting' },
     accentColor: '#00E676',
-    tag: '⚡ Science'
+    tag: 'âš¡ Science'
   },
   {
     id: 'develop',
     verb: 'Develop',
     videoUrl: './assets/videos/develop.mp4',
-    phonetic: '/dɪˈvɛl.əp/',
+    phonetic: '/dÉªËˆvÉ›l.É™p/',
     category: 'Science',
     definition: 'To grow, improve, or build something step by step over time!',
     forms: { base: 'develop', past: 'developed', continuous: 'developing' },
@@ -1852,13 +1895,13 @@
     },
     highlightWords: { base: 'develops', past: 'developed', continuous: 'developing' },
     accentColor: '#7C4DFF',
-    tag: '💻 Science'
+    tag: 'ðŸ’» Science'
   },
   {
     id: 'achieve',
     verb: 'Achieve',
     videoUrl: './assets/videos/achieve.mp4',
-    phonetic: '/əˈtʃiːv/',
+    phonetic: '/É™ËˆtÊƒiËv/',
     category: 'Daily',
     definition: 'To successfully reach a goal after working hard and not giving up!',
     forms: { base: 'achieve', past: 'achieved', continuous: 'achieving' },
@@ -1869,13 +1912,13 @@
     },
     highlightWords: { base: 'achieves', past: 'achieved', continuous: 'achieving' },
     accentColor: '#FFB300',
-    tag: '🏆 Daily'
+    tag: 'ðŸ† Daily'
   },
   {
     id: 'protect',
     verb: 'Protect',
     videoUrl: './assets/videos/protect.mp4',
-    phonetic: '/prəˈtɛkt/',
+    phonetic: '/prÉ™ËˆtÉ›kt/',
     category: 'Daily',
     definition: 'To keep someone or something safe from harm or danger!',
     forms: { base: 'protect', past: 'protected', continuous: 'protecting' },
@@ -1886,13 +1929,13 @@
     },
     highlightWords: { base: 'protects', past: 'protected', continuous: 'protecting' },
     accentColor: '#00E5FF',
-    tag: '🛡️ Daily'
+    tag: 'ðŸ›¡ï¸ Daily'
   },
   {
     id: 'rescue',
     verb: 'Rescue',
     videoUrl: './assets/videos/rescue.mp4',
-    phonetic: '/ˈrɛs.kjuː/',
+    phonetic: '/ËˆrÉ›s.kjuË/',
     category: 'Daily',
     definition: 'To save someone or something from a dangerous situation!',
     forms: { base: 'rescue', past: 'rescued', continuous: 'rescuing' },
@@ -1903,7 +1946,7 @@
     },
     highlightWords: { base: 'rescues', past: 'rescued', continuous: 'rescuing' },
     accentColor: '#FF1744',
-    tag: '🚒 Daily'
+    tag: 'ðŸš’ Daily'
   }
 ];
 
@@ -3132,14 +3175,14 @@
             [verbId]: { status: 'mastered', nextReview: now + 3 * 24 * 60 * 60 * 1000 }
           }));
           if (setXp) setXp(prev => prev + 10);
-          if (showToast) showToast('Know It! Locked in brain +10 XP ⭐');
+          if (showToast) showToast('Know It! Locked in brain +10 XP â­');
         } else {
           sfx.playBlip(540);
           setVaultProgress(prev => ({
             ...prev,
             [verbId]: { status: 'practicing', nextReview: now + 12 * 60 * 60 * 1000 }
           }));
-          if (showToast) showToast('Moved back to Practicing ⚡');
+          if (showToast) showToast('Moved back to Practicing âš¡');
         }
       };
 
@@ -3167,7 +3210,7 @@
           localStorage.setItem('verbvibe_daily_blitz_mastered_date', todayDateStr);
         } catch(e) {}
         if (setXp) setXp(prev => prev + 15);
-        if (showToast) showToast('Mastered flashcard! +15 XP ⚡');
+        if (showToast) showToast('Mastered flashcard! +15 XP âš¡');
       };
 
       return (
@@ -3177,7 +3220,7 @@
           <div className="p-4 rounded-2xl glass-card border border-white/10 relative shadow-lg">
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-2">
-                <span className="text-arcade-cyan text-xl">📚</span>
+                <span className="text-arcade-cyan text-xl">ðŸ“š</span>
                 <h2 className="text-base font-black text-white tracking-wide">Verb Vault</h2>
               </div>
               <div className="flex items-center gap-1.5">
@@ -3190,7 +3233,7 @@
                   </button>
                 )}
                 <span className="px-2.5 py-1 rounded-full bg-white/10 text-[11px] font-mono font-bold text-arcade-cyan border border-white/5">
-                  {savedCount} Saved • {verbs.length} Total
+                  {savedCount} Saved â€¢ {verbs.length} Total
                 </span>
               </div>
             </div>
@@ -3215,7 +3258,7 @@
                 }`}
               >
                 <div className="flex items-center gap-1 text-arcade-emerald font-bold text-sm">
-                  <span>🏅</span>
+                  <span>ðŸ…</span>
                   <span>{knowItCount}</span>
                 </div>
                 <span className="text-white text-[11px] mt-0.5 font-bold">Know It!</span>
@@ -3232,7 +3275,7 @@
                 }`}
               >
                 <div className="flex items-center gap-1 text-arcade-cyan font-bold text-sm">
-                  <span>⚡</span>
+                  <span>âš¡</span>
                   <span>{practicingCount}</span>
                 </div>
                 <span className="text-white text-[11px] mt-0.5 font-bold">Practicing</span>
@@ -3249,7 +3292,7 @@
                 }`}
               >
                 <div className="flex items-center gap-1 text-arcade-pink font-bold text-sm">
-                  <span>🎯</span>
+                  <span>ðŸŽ¯</span>
                   <span>{playTodayCount}</span>
                 </div>
                 <span className="text-white text-[11px] mt-0.5 font-bold">Play Today</span>
@@ -3296,10 +3339,10 @@
 
               {[
                 { key: 'all', label: 'All Verbs' },
-                { key: 'sports', label: '⚽ Sports' },
-                { key: 'daily', label: '🎒 Everyday' },
-                { key: 'communication', label: '💬 Voice' },
-                { key: 'science', label: '🔬 Science' },
+                { key: 'sports', label: 'âš½ Sports' },
+                { key: 'daily', label: 'ðŸŽ’ Everyday' },
+                { key: 'communication', label: 'ðŸ’¬ Voice' },
+                { key: 'science', label: 'ðŸ”¬ Science' },
               ].map(f => (
                 <button 
                   key={f.key}
@@ -3471,7 +3514,7 @@
                   </div>
 
                   <div className="w-full p-3 rounded-2xl bg-white/5 border border-white/5 text-left text-xs text-slate-300">
-                    <strong className="text-arcade-amber">💡 Grammar Note:</strong> Regular action verbs add "-ed" for the past tense, while irregular verbs shift their root vowel!
+                    <strong className="text-arcade-amber">ðŸ’¡ Grammar Note:</strong> Regular action verbs add "-ed" for the past tense, while irregular verbs shift their root vowel!
                   </div>
 
                   <button 
@@ -3492,19 +3535,19 @@
           {/* 4. ALL ACTION VERBS LIBRARY LIST */}
           <div className="space-y-2.5">
             <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-              <span>📖</span> Action Verb Library ({filteredVerbs.length})
+              <span>ðŸ“–</span> Action Verb Library ({filteredVerbs.length})
             </h3>
 
             {filteredVerbs.length === 0 ? (
               <div className="p-6 rounded-2xl glass-card border border-white/10 text-center space-y-2">
-                <div className="text-2xl">{vaultFilter === 'due' ? '🎉' : '🔍'}</div>
+                <div className="text-2xl">{vaultFilter === 'due' ? 'ðŸŽ‰' : 'ðŸ”'}</div>
                 <p className="text-sm font-bold text-white">
                   {vaultFilter === 'due'
-                    ? 'All caught up for today! 🎉'
+                    ? 'All caught up for today! ðŸŽ‰'
                     : vaultFilter === 'mastered'
-                    ? 'No mastered verbs yet — tap "Know It! ⭐" on any verb!'
+                    ? 'No mastered verbs yet â€” tap "Know It! â­" on any verb!'
                     : vaultFilter === 'practicing'
-                    ? 'No verbs warming up yet — watch a reel or tap "Warming Up"!'
+                    ? 'No verbs warming up yet â€” watch a reel or tap "Warming Up"!'
                     : 'No matching verbs found.'}
                 </p>
                 {vaultFilter !== 'all' && (
@@ -3554,7 +3597,7 @@
                               : 'bg-slate-800/90 text-slate-200 border border-slate-700 font-semibold hover:bg-slate-700/90'
                           }`}
                         >
-                          Know It! ⭐
+                          Know It! â­
                         </button>
                         <button 
                           onClick={(e) => {
@@ -3597,7 +3640,7 @@
                         <span className="text-slate-400">Past:</span>{' '}
                         <span className="text-emerald-400 font-semibold">{verb.forms.past}</span>
                       </span>
-                      <span className="text-slate-600">•</span>
+                      <span className="text-slate-600">â€¢</span>
                       <span>
                         <span className="text-slate-400">Continuous:</span>{' '}
                         <span className="text-rose-400 font-semibold">{verb.forms.continuous}</span>
@@ -3829,11 +3872,11 @@
                     </h3>
                     {streak > 0 ? (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-arcade-emerald/20 text-arcade-emerald border border-arcade-emerald/30">
-                        ACTIVE 🔥
+                        ACTIVE ðŸ”¥
                       </span>
                     ) : (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-arcade-pink/20 text-arcade-pink border border-arcade-pink/30">
-                        RESET TO 0 ⚠️
+                        RESET TO 0 âš ï¸
                       </span>
                     )}
                   </div>
@@ -3960,7 +4003,7 @@
                 </div>
 
                 <p className="text-xs text-slate-200 font-semibold bg-black/40 p-2.5 rounded-2xl border border-white/5">
-                  ❓ Which is the correct <strong className="text-arcade-cyan">{currentQ.tenseLabel}</strong> of <strong className="text-arcade-emerald">"{currentQ.verb}"</strong>?
+                  â“ Which is the correct <strong className="text-arcade-cyan">{currentQ.tenseLabel}</strong> of <strong className="text-arcade-emerald">"{currentQ.verb}"</strong>?
                 </p>
 
                 <div className="grid grid-cols-2 gap-2">
@@ -4004,25 +4047,25 @@
 
       // Dynamic Rank Titles based on total XP milestones
       let rankTitle = 'Rookie Learner';
-      let rankBadge = '🌱';
+      let rankBadge = 'ðŸŒ±';
       if (xp >= 5000) {
         rankTitle = 'Mythic Verb Deity';
-        rankBadge = '🌌';
+        rankBadge = 'ðŸŒŒ';
       } else if (xp >= 3500) {
         rankTitle = 'Immortal Linguist';
-        rankBadge = '🔥';
+        rankBadge = 'ðŸ”¥';
       } else if (xp >= 2000) {
         rankTitle = 'Prestige Legend';
-        rankBadge = '⚡';
+        rankBadge = 'âš¡';
       } else if (xp >= 1000) {
         rankTitle = 'VerbVibe Grandmaster';
-        rankBadge = '👑';
+        rankBadge = 'ðŸ‘‘';
       } else if (xp >= 500) {
         rankTitle = 'Action Master';
-        rankBadge = '💎';
+        rankBadge = 'ðŸ’Ž';
       } else if (xp >= 200) {
         rankTitle = 'Rising Striker';
-        rankBadge = '⚔️';
+        rankBadge = 'âš”ï¸';
       }
 
       return {
@@ -4048,28 +4091,28 @@
       const savedCount = Object.keys(savedVerbIds || {}).filter(id => !!savedVerbIds[id]).length;
 
       const trophies = [
-        { id: 'first_step', title: 'First Action', desc: 'Watch or swipe your first verb reel', icon: '⚡', target: 1, statKey: 'reelsViewed' },
-        { id: 'reel_explorer', title: 'Reel Explorer', desc: 'Explore 15 action verb reels', icon: '🎬', target: 15, statKey: 'reelsViewed' },
-        { id: 'action_master', title: 'Action Addict', desc: 'Watch 50 verb reels', icon: '🔥', target: 50, statKey: 'reelsViewed' },
-        { id: 'sharp_ears', title: 'Sharp Ears', desc: 'Listen to 10 word or sentence pronunciations', icon: '🎧', target: 10, statKey: 'audioPlayed' },
-        { id: 'polyglot_ear', title: 'Audio Enthusiast', desc: 'Play 35 audio pronunciations', icon: '🔊', target: 35, statKey: 'audioPlayed' },
-        { id: 'tense_shifter', title: 'Tense Shifter', desc: 'Switch verb tenses (Present/Past/Continuous) 10 times', icon: '⏳', target: 10, statKey: 'tensesSwitched' },
-        { id: 'time_traveler', title: 'Time Traveler', desc: 'Practice 30 tense variations across reels', icon: '🕰️', target: 30, statKey: 'tensesSwitched' },
-        { id: 'deck_collector', title: 'Deck Collector', desc: 'Save 5 verbs to your personal Deck', icon: '🔖', target: 5, statKey: 'savedCount' },
-        { id: 'deck_curator', title: 'Master Curator', desc: 'Save 20 verbs to your Deck', icon: '📚', target: 20, statKey: 'savedCount' },
-        { id: 'xp_champion', title: 'XP Champion', desc: 'Earn 250 total XP', icon: '🏆', target: 250, statKey: 'xp' },
-        { id: 'full_roster', title: 'Verb Completionist', desc: 'Watch or swipe through all 82 verb reels', icon: '🎯', target: 82, statKey: 'reelsViewed' },
-        { id: 'sound_virtuoso', title: 'Sound Virtuoso', desc: 'Play 100 word or sentence pronunciations', icon: '🎶', target: 100, statKey: 'audioPlayed' },
-        { id: 'grammar_guru', title: 'Grammar Guru', desc: 'Switch verb tenses 75 times across reels', icon: '🧠', target: 75, statKey: 'tensesSwitched' },
-        { id: 'half_library', title: 'Vault Architect', desc: 'Save 40 verbs to your personal Deck', icon: '🏛️', target: 40, statKey: 'savedCount' },
-        { id: 'xp_legend', title: 'XP Legend', desc: 'Earn 500 total XP', icon: '💎', target: 500, statKey: 'xp' },
-        { id: 'xp_grandmaster', title: 'VerbVibe Grandmaster', desc: 'Earn 1,000 total XP', icon: '👑', target: 1000, statKey: 'xp' },
-        { id: 'quest_starter', title: 'Quest Hunter', desc: 'Complete your first Quest in the Quests tab', icon: '🗡️', target: 1, statKey: 'questsCompleted' },
-        { id: 'quest_veteran', title: 'Quest Veteran', desc: 'Complete 5 Quests in the Quests tab', icon: '🛡️', target: 5, statKey: 'questsCompleted' },
-        { id: 'accent_explorer', title: 'Accent Explorer', desc: 'Test or switch a voice accent in Settings', icon: '🌐', target: 1, statKey: 'accentChanged' },
-        { id: 'streak_keeper', title: 'Consistent Learner', desc: 'Reach a 3-day learning streak', icon: '📆', target: 3, statKey: 'streak' },
-        { id: 'xp_prestige', title: 'Prestige Ascendant', desc: 'Surpass 2,000 total XP to enter Prestige Rank', icon: '⚡', target: 2000, statKey: 'xp' },
-        { id: 'xp_immortal', title: 'Immortal Linguist', desc: 'Reach 3,500 total XP', icon: '🌌', target: 3500, statKey: 'xp' },
+        { id: 'first_step', title: 'First Action', desc: 'Watch or swipe your first verb reel', icon: 'âš¡', target: 1, statKey: 'reelsViewed' },
+        { id: 'reel_explorer', title: 'Reel Explorer', desc: 'Explore 15 action verb reels', icon: 'ðŸŽ¬', target: 15, statKey: 'reelsViewed' },
+        { id: 'action_master', title: 'Action Addict', desc: 'Watch 50 verb reels', icon: 'ðŸ”¥', target: 50, statKey: 'reelsViewed' },
+        { id: 'sharp_ears', title: 'Sharp Ears', desc: 'Listen to 10 word or sentence pronunciations', icon: 'ðŸŽ§', target: 10, statKey: 'audioPlayed' },
+        { id: 'polyglot_ear', title: 'Audio Enthusiast', desc: 'Play 35 audio pronunciations', icon: 'ðŸ”Š', target: 35, statKey: 'audioPlayed' },
+        { id: 'tense_shifter', title: 'Tense Shifter', desc: 'Switch verb tenses (Present/Past/Continuous) 10 times', icon: 'â³', target: 10, statKey: 'tensesSwitched' },
+        { id: 'time_traveler', title: 'Time Traveler', desc: 'Practice 30 tense variations across reels', icon: 'ðŸ•°ï¸', target: 30, statKey: 'tensesSwitched' },
+        { id: 'deck_collector', title: 'Deck Collector', desc: 'Save 5 verbs to your personal Deck', icon: 'ðŸ”–', target: 5, statKey: 'savedCount' },
+        { id: 'deck_curator', title: 'Master Curator', desc: 'Save 20 verbs to your Deck', icon: 'ðŸ“š', target: 20, statKey: 'savedCount' },
+        { id: 'xp_champion', title: 'XP Champion', desc: 'Earn 250 total XP', icon: 'ðŸ†', target: 250, statKey: 'xp' },
+        { id: 'full_roster', title: 'Verb Completionist', desc: 'Watch or swipe through all 82 verb reels', icon: 'ðŸŽ¯', target: 82, statKey: 'reelsViewed' },
+        { id: 'sound_virtuoso', title: 'Sound Virtuoso', desc: 'Play 100 word or sentence pronunciations', icon: 'ðŸŽ¶', target: 100, statKey: 'audioPlayed' },
+        { id: 'grammar_guru', title: 'Grammar Guru', desc: 'Switch verb tenses 75 times across reels', icon: 'ðŸ§ ', target: 75, statKey: 'tensesSwitched' },
+        { id: 'half_library', title: 'Vault Architect', desc: 'Save 40 verbs to your personal Deck', icon: 'ðŸ›ï¸', target: 40, statKey: 'savedCount' },
+        { id: 'xp_legend', title: 'XP Legend', desc: 'Earn 500 total XP', icon: 'ðŸ’Ž', target: 500, statKey: 'xp' },
+        { id: 'xp_grandmaster', title: 'VerbVibe Grandmaster', desc: 'Earn 1,000 total XP', icon: 'ðŸ‘‘', target: 1000, statKey: 'xp' },
+        { id: 'quest_starter', title: 'Quest Hunter', desc: 'Complete your first Quest in the Quests tab', icon: 'ðŸ—¡ï¸', target: 1, statKey: 'questsCompleted' },
+        { id: 'quest_veteran', title: 'Quest Veteran', desc: 'Complete 5 Quests in the Quests tab', icon: 'ðŸ›¡ï¸', target: 5, statKey: 'questsCompleted' },
+        { id: 'accent_explorer', title: 'Accent Explorer', desc: 'Test or switch a voice accent in Settings', icon: 'ðŸŒ', target: 1, statKey: 'accentChanged' },
+        { id: 'streak_keeper', title: 'Consistent Learner', desc: 'Reach a 3-day learning streak', icon: 'ðŸ“†', target: 3, statKey: 'streak' },
+        { id: 'xp_prestige', title: 'Prestige Ascendant', desc: 'Surpass 2,000 total XP to enter Prestige Rank', icon: 'âš¡', target: 2000, statKey: 'xp' },
+        { id: 'xp_immortal', title: 'Immortal Linguist', desc: 'Reach 3,500 total XP', icon: 'ðŸŒŒ', target: 3500, statKey: 'xp' },
       ];
 
       const getTrophyProgress = (trophy) => {
@@ -4139,7 +4182,7 @@
                       <h2 className="text-lg font-black text-white truncate">
                         {playerName}
                       </h2>
-                      <span className="text-arcade-cyan text-sm" title="Verified Explorer">✓</span>
+                      <span className="text-arcade-cyan text-sm" title="Verified Explorer">âœ“</span>
                       <button
                         onClick={() => {
                           setNameInput(playerName);
@@ -4225,7 +4268,7 @@
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                <span>🏆</span> Unlocked Trophies Vault
+                <span>ðŸ†</span> Unlocked Trophies Vault
               </h3>
               <span className="text-xs text-arcade-cyan font-mono font-bold">
                 {unlockedCount} / {trophies.length} Unlocked
@@ -4251,7 +4294,7 @@
                       </span>
                       {isUnlocked ? (
                         <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-arcade-emerald/20 text-arcade-emerald border border-arcade-emerald/40 shadow-[0_0_10px_rgba(0,230,118,0.35)]">
-                          ✓ Unlocked
+                          âœ“ Unlocked
                         </span>
                       ) : (
                         <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-black/40 text-slate-300 border border-white/10">
@@ -4293,34 +4336,34 @@
         icon: 'logo',
         title: 'Learn Action Verbs the Fun Way!',
         desc: 'VerbVibe turns 82+ everyday English action verbs into short, lively anime video reels so you can see every word in action instead of memorizing boring lists.',
-        highlight: 'Watch • Listen • Speak'
+        highlight: 'Watch â€¢ Listen â€¢ Speak'
       },
       {
         badge: 'Why VerbVibe?',
-        icon: '🎬',
+        icon: 'ðŸŽ¬',
         title: 'See It, Hear It, Remember It',
-        desc: 'Connecting visual motion with real sentences helps your brain lock in new words faster—perfect for building confident spoken English every day.',
+        desc: 'Connecting visual motion with real sentences helps your brain lock in new words fasterâ€”perfect for building confident spoken English every day.',
         highlight: 'Swipe up & down through 82+ action reels'
       },
       {
         badge: 'Interactive Reels',
-        icon: '⏳',
+        icon: 'â³',
         title: 'Switch Tenses & Tap to Listen',
         desc: 'Toggle between Present, Past, and Continuous forms on any reel, and tap the word or sentence to hear clear pronunciation with live word-by-word highlighting.',
-        highlight: 'Present • Past • Continuous'
+        highlight: 'Present â€¢ Past â€¢ Continuous'
       },
       {
         badge: 'Quests Tab',
-        icon: '⭐',
+        icon: 'â­',
         title: 'Daily Quests & Flashcard Challenges',
-        desc: 'Open the Quests tab to play Today’s Flashcard, complete fun mini-challenges, keep your daily learning streak alive, and earn bonus XP every day.',
-        highlight: 'Play Daily • Build Streaks • Level Up'
+        desc: 'Open the Quests tab to play Todayâ€™s Flashcard, complete fun mini-challenges, keep your daily learning streak alive, and earn bonus XP every day.',
+        highlight: 'Play Daily â€¢ Build Streaks â€¢ Level Up'
       },
       {
         badge: 'Vault & Trophies',
-        icon: '🏆',
+        icon: 'ðŸ†',
         title: 'Master Words & Unlock Trophies',
-        desc: 'Save verbs to your Verb Vault, tap "Know It! ⭐" as you master them, climb endless XP prestige ranks, and unlock all 20 achievement trophies!',
+        desc: 'Save verbs to your Verb Vault, tap "Know It! â­" as you master them, climb endless XP prestige ranks, and unlock all 20 achievement trophies!',
         highlight: 'Ready to start your streak?'
       }
     ];
@@ -4559,7 +4602,7 @@ const [playerName, setPlayerName] = useState(() => {
           localStorage.setItem('verbvibe_streak', newStreak.toString());
         } catch(e){}
         sfx.playGoalChime();
-        showToast(`🔥 Streak Extended to ${newStreak} Days! +25 XP`);
+        showToast(`ðŸ”¥ Streak Extended to ${newStreak} Days! +25 XP`);
       };
 
       // Save bookmarks to localStorage
@@ -4644,7 +4687,7 @@ const [playerName, setPlayerName] = useState(() => {
           const isAdding = !prev[id];
           if (isAdding) markVerbPracticingIfNew(id);
           const next = { ...prev, [id]: isAdding };
-          showToast(isAdding ? 'Saved to Vault! ⭐' : 'Removed from Vault');
+          showToast(isAdding ? 'Saved to Vault! â­' : 'Removed from Vault');
           return next;
         });
       };
@@ -4869,7 +4912,7 @@ const [playerName, setPlayerName] = useState(() => {
 
                 {/* Total XP Badge */}
                 <div className="flex items-center gap-1 px-2.5 py-1 rounded-full glass-pill text-xs font-bold text-arcade-emerald">
-                  <span>⚡</span>
+                  <span>âš¡</span>
                   <span className="font-mono">{xp}</span>
                 </div>
 
@@ -4878,7 +4921,7 @@ const [playerName, setPlayerName] = useState(() => {
                   onClick={() => {
                     setIsMuted(!isMuted);
                     sfx.playBlip(isMuted ? 660 : 300);
-                    showToast(isMuted ? 'Audio Unmuted 🔊' : 'Audio Muted 🔇');
+                    showToast(isMuted ? 'Audio Unmuted ðŸ”Š' : 'Audio Muted ðŸ”‡');
                   }}
                   className="w-8 h-8 rounded-full glass-pill flex items-center justify-center text-arcade-cyan hover:border-arcade-cyan transition-all"
                   title="Toggle Mute"
@@ -4919,7 +4962,7 @@ const [playerName, setPlayerName] = useState(() => {
                   trackTrophyAction={trackTrophyAction}
                   onPracticeClick={() => {
                     handleTabSwitch('quests');
-                    showToast('Take today\'s practice challenge! 🎯');
+                    showToast('Take today\'s practice challenge! ðŸŽ¯');
                   }}
                 />
               </div>
@@ -5138,7 +5181,7 @@ const [playerName, setPlayerName] = useState(() => {
                     }}
                     className="w-full py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-arcade-cyan hover:bg-cyan-500/10 hover:border-cyan-400/30 transition-all flex items-center justify-center gap-1.5"
                   >
-                    <span>🎬</span>
+                    <span>ðŸŽ¬</span>
                     <span>Replay App Intro Tour</span>
                   </button>
 
@@ -5186,7 +5229,7 @@ const [playerName, setPlayerName] = useState(() => {
             <span>Use</span>
             <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-arcade-cyan font-bold">Up</kbd>
             <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-arcade-cyan font-bold">Down</kbd>
-            <span>in Reels • Press</span>
+            <span>in Reels â€¢ Press</span>
             <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-arcade-emerald font-bold">Space</kbd>
             <span>to read sentence</span>
           </div>
@@ -5278,7 +5321,7 @@ const [playerName, setPlayerName] = useState(() => {
                       }}
                       className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 text-xs font-black shadow-[0_0_16px_rgba(34,211,238,0.45)] hover:brightness-110 transition-all active:scale-95"
                     >
-                      {isLast ? 'Start Learning 🚀' : 'Next →'}
+                      {isLast ? 'Start Learning ðŸš€' : 'Next â†’'}
                     </button>
                   </div>
                 </div>
@@ -5296,3 +5339,4 @@ const [playerName, setPlayerName] = useState(() => {
   </script>
 </body>
 </html>
+
