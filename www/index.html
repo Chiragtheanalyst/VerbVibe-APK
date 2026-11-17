@@ -4328,7 +4328,7 @@
                       {canClaim ? (
                         <button
                           type="button"
-                          onClick={() => onClaimTrophy && onClaimTrophy(trophy)}
+                          onClick={() => handleClaimTrophy(trophy)}
                           className="w-full py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[11px] font-black tracking-wide shadow-[0_0_12px_rgba(251,191,36,0.45)] active:scale-95 transition-transform cursor-pointer"
                         >
                           Claim
@@ -5052,7 +5052,7 @@ const [playerName, setPlayerName] = useState(() => {
                   setPlayerName={setPlayerName}
                   trophyStats={trophyStats}
                   savedVerbIds={savedVerbIds}
-                />
+                 setXp={setXp} showToast={showToast} />
               )}
             </main>
 
