@@ -3282,7 +3282,7 @@
             </div>
 
             {/* 3-Column Interactive Kid-Friendly Filter Boxes */}
-            <div className="grid grid-cols-3 gap-2 text-center text-xs">
+            <div className="grid flex justify-center gap-2 text-center text-xs">
               <button
                 type="button"
                 onClick={() => { setVaultFilter(prev => prev === 'mastered' ? 'all' : 'mastered'); sfx.playBlip(560); }}
@@ -3292,7 +3292,7 @@
                     : 'bg-black/40 border-white/5 hover:bg-black/60'
                 }`}
               >
-                <div className="flex items-center gap-1 text-arcade-emerald font-bold text-sm">
+                <div className="flex items-center gap-1 text-arcade-emerald font-bold text-sm w-full max-w-[220px] mx-auto">
                   <span>🏅</span>
                   <span>{knowItCount}</span>
                 </div>
