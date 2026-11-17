@@ -4553,8 +4553,8 @@
       const [savedVerbIds, setSavedVerbIds] = useState(() => {
         try {
           const s = localStorage.getItem('verbvibe_saved_verbs');
-          return s ? JSON.parse(s) : { kick: true, jump: true };
-        } catch(e) { return { kick: true, jump: true }; }
+          return s ? JSON.parse(s) : {};
+        } catch(e) { return {}; }
       });
 
       const [xp, setXp] = useState(() => {
@@ -5422,16 +5422,16 @@ const [playerName, setPlayerName] = useState(() => {
 <script id="vault-tenses-addon">
 (function() {
   // Ensure Saved Verbs start at 0 on fresh first install
-  if (!localStorage.getItem('vv_fresh_install_v1')) {
+  if (!localStorage.getItem('vv_fresh_install_v2')) {
     Object.keys(localStorage).forEach(k => {
       if (/save|bookmark/i.test(k)) {
         try {
           const parsed = JSON.parse(localStorage.getItem(k));
-          if (Array.isArray(parsed)) localStorage.setItem(k, JSON.stringify([]));
+          localStorage.removeItem('verbvibe_saved_verbs');
         } catch (e) {}
       }
     });
-    localStorage.setItem('vv_fresh_install_v1', '1');
+    localStorage.setItem('vv_fresh_install_v2', '1');
   }
 
   const VERB_FORMS = {
