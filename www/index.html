@@ -5372,5 +5372,51 @@ const [playerName, setPlayerName] = useState(() => {
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
+<script id="reel-loop-fix">
+(function() {
+  function findReelScroller() {
+    const candidates = Array.from(document.querySelectorAll('div, main, section'));
+    return candidates.find(el => {
+      const style = window.getComputedStyle(el);
+      const scrollable = (style.overflowY === 'scroll' || style.overflowY === 'auto');
+      return scrollable && el.scrollHeight > el.clientHeight + 100 && el.offsetParent !== null;
+    });
+  }
+
+  let startY = 0;
+  let startedAtBottom = false;
+
+  document.addEventListener('touchstart', function(e) {
+    const scroller = findReelScroller();
+    if (!scroller || !e.touches || !e.touches.length) return;
+    startY = e.touches[0].clientY;
+    startedAtBottom = (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 15);
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    const scroller = findReelScroller();
+    if (!scroller || !startedAtBottom || !e.changedTouches || !e.changedTouches.length) return;
+    const endY = e.changedTouches[0].clientY;
+    const swipedUp = (startY - endY) > 45;
+    const stillAtBottom = (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 15);
+    if (swipedUp && stillAtBottom) {
+      scroller.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    startedAtBottom = false;
+  }, { passive: true });
+
+  let wheelLock = false;
+  document.addEventListener('wheel', function(e) {
+    const scroller = findReelScroller();
+    if (!scroller || wheelLock) return;
+    const atBottom = (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 15);
+    if (atBottom && e.deltaY > 25) {
+      wheelLock = true;
+      scroller.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => { wheelLock = false; }, 700);
+    }
+  }, { passive: true });
+})();
+</script>
 </body>
 </html>
