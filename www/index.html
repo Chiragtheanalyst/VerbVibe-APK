@@ -3213,7 +3213,7 @@
           try { claimedKnowIt = JSON.parse(localStorage.getItem('verbvibe_knowit_xp_claimed') || '{}'); } catch(e) {}
           if (!claimedKnowIt[verbId]) {
             claimedKnowIt[verbId] = true;
-            try { localStorage.setItem('verbvibe_knowit_xp_claimed', JSON.stringify(claimedKnowIt)); } catch(e) {}
+            try { localStorage.setItem('verbvibe_knowit_xp_claimed', JSON.stringify(claimedKnowIt)); const cr = JSON.parse(localStorage.getItem('verbvibe_knowit_xp_credited') || '{}'); cr[verbId] = true; localStorage.setItem('verbvibe_knowit_xp_credited', JSON.stringify(cr)); } catch(e) {}
             if (setXp) setXp(prev => prev + 10);
             if (showToast) showToast('Know It! Locked in brain +10 XP ⭐');
           } else {
@@ -4091,13 +4091,14 @@
     // ========================================================
     // TAB 4: TROPHIES (IMPROVED NAME CARD & NO JUNIOR LEAGUE)
     // ========================================================
-    const TrophiesTab = ({ xp, streak, playerName, setPlayerName, trophyStats = {}, savedVerbIds = {} }) => {
+    const TrophiesTab = ({ xp, streak, playerName, setPlayerName, trophyStats = {}, savedVerbIds = {}, vaultProgress = {} }) => {
       const [isEditingName, setIsEditingName] = useState(false);
       const [nameInput, setNameInput] = useState(playerName);
 
       const levelInfo = getLevelDetails(xp);
 
       const savedCount = Object.keys(savedVerbIds || {}).filter(id => !!savedVerbIds[id]).length;
+      const knowItCount = Object.keys(vaultProgress || {}).filter(id => vaultProgress[id]?.status === 'mastered').length;
 
       const trophies = [
         { id: 'first_step', title: 'First Action', desc: 'Watch or swipe your first verb reel', icon: '⚡', target: 1, statKey: 'reelsViewed', xpReward: 10 },
@@ -4105,6 +4106,8 @@
         { id: 'quest_starter', title: 'Quest Hunter', desc: 'Complete your first Quest in the Quests tab', icon: '🗡️', target: 1, statKey: 'questsCompleted', xpReward: 20 },
         { id: 'sharp_ears', title: 'Sharp Ears', desc: 'Listen to 10 word or sentence pronunciations', icon: '🎧', target: 10, statKey: 'audioPlayed', xpReward: 20 },
         { id: 'tense_shifter', title: 'Tense Shifter', desc: 'Switch verb tenses (Present/Past/Continuous) 10 times', icon: '⏳', target: 10, statKey: 'tensesSwitched', xpReward: 20 },
+        { id: 'knowit_starter', title: 'Brain Locker', desc: 'Mark 5 verbs as Know It! in Verb Vault', icon: '🧠', target: 5, statKey: 'knowItCount', xpReward: 25 },
+        { id: 'knowit_master', title: 'Memory Champion', desc: 'Mark 25 verbs as Know It! in Verb Vault', icon: '⭐', target: 25, statKey: 'knowItCount', xpReward: 75 },
         { id: 'deck_collector', title: 'Deck Collector', desc: 'Save 5 verbs to your personal Deck', icon: '🔖', target: 5, statKey: 'savedCount', xpReward: 25 },
         { id: 'reel_explorer', title: 'Reel Explorer', desc: 'Explore 15 action verb reels', icon: '🎬', target: 15, statKey: 'reelsViewed', xpReward: 30 },
         { id: 'streak_keeper', title: 'Consistent Learner', desc: 'Reach a 3-day learning streak', icon: '📆', target: 3, statKey: 'streak', xpReward: 40 },
@@ -4127,6 +4130,8 @@
       const getTrophyProgress = (trophy) => {
         const currentVal = trophy.statKey === 'savedCount'
           ? savedCount
+          : trophy.statKey === 'knowItCount'
+          ? knowItCount
           : trophy.statKey === 'xp'
           ? xp
           : trophy.statKey === 'streak'
@@ -4563,6 +4568,8 @@
           { id: 'quest_starter', title: 'Quest Hunter', target: 1, statKey: 'questsCompleted', xp: 20 },
           { id: 'sharp_ears', title: 'Sharp Ears', target: 10, statKey: 'audioPlayed', xp: 20 },
           { id: 'tense_shifter', title: 'Tense Shifter', target: 10, statKey: 'tensesSwitched', xp: 20 },
+          { id: 'knowit_starter', title: 'Brain Locker', target: 5, statKey: 'knowItCount', xp: 25 },
+          { id: 'knowit_master', title: 'Memory Champion', target: 25, statKey: 'knowItCount', xp: 75 },
           { id: 'deck_collector', title: 'Deck Collector', target: 5, statKey: 'savedCount', xp: 25 },
           { id: 'reel_explorer', title: 'Reel Explorer', target: 15, statKey: 'reelsViewed', xp: 30 },
           { id: 'streak_keeper', title: 'Consistent Learner', target: 3, statKey: 'streak', xp: 40 },
@@ -4586,12 +4593,14 @@
         try { claimed = JSON.parse(localStorage.getItem('verbvibe_claimed_trophies') || '{}'); } catch(e) {}
 
         const savedCountNow = Object.keys(savedVerbIds || {}).filter(id => !!savedVerbIds[id]).length;
+        const knowItCountNow = Object.keys(vaultProgress || {}).filter(id => vaultProgress[id]?.status === 'mastered').length;
         let bonusXp = 0;
         let lastTitle = '';
 
         TROPHY_RULES.forEach(t => {
           if (claimed[t.id]) return;
           const val = t.statKey === 'savedCount' ? savedCountNow
+                    : t.statKey === 'knowItCount' ? knowItCountNow
                     : t.statKey === 'xp' ? xp
                     : t.statKey === 'streak' ? (streak || 1)
                     : (trophyStats[t.statKey] || 0);
@@ -4611,6 +4620,25 @@
           }
         }
       }, [trophyStats, savedVerbIds, streak, xp]);
+
+      // Ensure all claimed "Know It!" (+10 XP) verbs are reflected in total XP & Trophies progress bar
+      useEffect(() => {
+        try {
+          const claimedKnowIt = JSON.parse(localStorage.getItem('verbvibe_knowit_xp_claimed') || '{}');
+          const creditedKnowIt = JSON.parse(localStorage.getItem('verbvibe_knowit_xp_credited') || '{}');
+          let uncreditedCount = 0;
+          Object.keys(claimedKnowIt).forEach(id => {
+            if (claimedKnowIt[id] && !creditedKnowIt[id]) {
+              creditedKnowIt[id] = true;
+              uncreditedCount++;
+            }
+          });
+          if (uncreditedCount > 0) {
+            localStorage.setItem('verbvibe_knowit_xp_credited', JSON.stringify(creditedKnowIt));
+            setXp(prev => prev + uncreditedCount * 10);
+          }
+        } catch(e) {}
+      }, [vaultProgress]);
 
       // Sync XP to localStorage whenever it changes
       useEffect(() => {
@@ -5078,7 +5106,9 @@ const [playerName, setPlayerName] = useState(() => {
                   playerName={playerName}
                   setPlayerName={setPlayerName}
                   trophyStats={trophyStats}
-                  savedVerbIds={savedVerbIds} />
+                  savedVerbIds={savedVerbIds} 
+                  vaultProgress={vaultProgress}
+                />
               )}
             </main>
 
