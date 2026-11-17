@@ -3299,40 +3299,6 @@
                 <span className="text-white text-[11px] mt-0.5 font-bold">Know It!</span>
                 <span className="text-slate-400 text-[9px] leading-tight">Locked in brain</span>
               </button>
-
-              <button
-                type="button"
-                onClick={() => { setVaultFilter(prev => prev === 'practicing' ? 'all' : 'practicing'); sfx.playBlip(560); }}
-                className={`p-2.5 rounded-xl border flex flex-col items-center transition-all cursor-pointer active:scale-95 ${
-                  vaultFilter === 'practicing'
-                    ? 'ring-2 ring-cyan-400 bg-slate-800/90 border-cyan-400/50 shadow-[0_0_12px_rgba(34,211,238,0.3)]'
-                    : 'bg-black/40 border-white/5 hover:bg-black/60'
-                }`}
-              >
-                <div className="flex items-center gap-1 text-arcade-cyan font-bold text-sm">
-                  <span>⚡</span>
-                  <span>{practicingCount}</span>
-                </div>
-                <span className="text-white text-[11px] mt-0.5 font-bold">Practicing</span>
-                <span className="text-slate-400 text-[9px] leading-tight">Warming up</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => { setVaultFilter(prev => prev === 'due' ? 'all' : 'due'); sfx.playBlip(560); }}
-                className={`p-2.5 rounded-xl border flex flex-col items-center transition-all cursor-pointer active:scale-95 ${
-                  vaultFilter === 'due'
-                    ? 'ring-2 ring-cyan-400 bg-slate-800/90 border-cyan-400/50 shadow-[0_0_12px_rgba(34,211,238,0.3)]'
-                    : 'bg-black/40 border-white/5 hover:bg-black/60'
-                }`}
-              >
-                <div className="flex items-center gap-1 text-arcade-pink font-bold text-sm">
-                  <span>🎯</span>
-                  <span>{playTodayCount}</span>
-                </div>
-                <span className="text-white text-[11px] mt-0.5 font-bold">Play Today</span>
-                <span className="text-slate-400 text-[9px] leading-tight">Ready to check</span>
-              </button>
             </div>
           </div>
 
@@ -5684,24 +5650,6 @@ const [playerName, setPlayerName] = useState(() => {
 
   function cleanVaultAndWireTenses() {
     const reelVerbs = getOrderedReelVerbs();
-
-    // 1. Safely hide ONLY the two small "Practicing" and "Play Today" stat cards
-    document.querySelectorAll('div').forEach(el => {
-      if (el.dataset.vvHiddenStat) return;
-      const totalDescendants = el.querySelectorAll('*').length;
-      if (totalDescendants > 0 && totalDescendants <= 6 && el.offsetHeight > 0 && el.offsetHeight < 140) {
-        const txt = (el.innerText || '').trim();
-        const isPracticing = /Practicing/i.test(txt) && /Warming up/i.test(txt) && !/Know It/i.test(txt);
-        const isPlayToday = /Play Today/i.test(txt) && /Ready to check/i.test(txt) && !/Know It/i.test(txt);
-        if (isPracticing || isPlayToday) {
-          el.dataset.vvHiddenStat = '1';
-          el.style.display = 'none';
-          if (el.parentElement) {
-            el.parentElement.style.gridTemplateColumns = '1fr';
-          }
-        }
-      }
-    });
 
     // 2. Add "All Tenses" button (no emoji) in Verb Vault header
     const vaultHeaders = Array.from(document.querySelectorAll('h1, h2, h3, div')).filter(el =>
