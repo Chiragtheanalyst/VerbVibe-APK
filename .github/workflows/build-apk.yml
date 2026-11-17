@@ -1,4 +1,4 @@
-﻿name: Build VerbVibe Test APK
+name: Build VerbVibe Test APK
 on:
   push:
     branches: [ main ]
@@ -21,6 +21,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+          cache: 'gradle'
 
       - name: Install dependencies & sync Capacitor
         run: |
