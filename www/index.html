@@ -3215,9 +3215,6 @@
             claimedKnowIt[verbId] = true;
             try { localStorage.setItem('verbvibe_knowit_xp_claimed', JSON.stringify(claimedKnowIt)); const cr = JSON.parse(localStorage.getItem('verbvibe_knowit_xp_credited') || '{}'); cr[verbId] = true; localStorage.setItem('verbvibe_knowit_xp_credited', JSON.stringify(cr)); } catch(e) {}
             if (setXp) setXp(prev => prev + 10);
-            if (showToast) showToast('Know It! Locked in brain +10 XP ⭐');
-          } else {
-            if (showToast) showToast('Know It! Locked in brain ⭐');
           }
         } else {
           sfx.playBlip(540);
