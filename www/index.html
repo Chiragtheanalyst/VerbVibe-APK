@@ -3209,15 +3209,23 @@
             ...prev,
             [verbId]: { status: 'mastered', nextReview: now + 3 * 24 * 60 * 60 * 1000 }
           }));
-          if (setXp) setXp(prev => prev + 10);
-          if (showToast) showToast('Know It! Locked in brain +10 XP ⭐');
+          let claimedKnowIt = {};
+          try { claimedKnowIt = JSON.parse(localStorage.getItem('verbvibe_knowit_xp_claimed') || '{}'); } catch(e) {}
+          if (!claimedKnowIt[verbId]) {
+            claimedKnowIt[verbId] = true;
+            try { localStorage.setItem('verbvibe_knowit_xp_claimed', JSON.stringify(claimedKnowIt)); } catch(e) {}
+            if (setXp) setXp(prev => prev + 10);
+            if (showToast) showToast('Know It! Locked in brain +10 XP ⭐');
+          } else {
+            if (showToast) showToast('Know It! Locked in brain ⭐');
+          }
         } else {
           sfx.playBlip(540);
-          setVaultProgress(prev => ({
-            ...prev,
-            [verbId]: { status: 'practicing', nextReview: now + 12 * 60 * 60 * 1000 }
-          }));
-          if (showToast) showToast('Moved back to Practicing ⚡');
+          setVaultProgress(prev => {
+            const next = { ...prev };
+            delete next[verbId];
+            return next;
+          });
         }
       };
 
