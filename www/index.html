@@ -4796,7 +4796,6 @@ const [playerName, setPlayerName] = useState(() => {
           const isAdding = !prev[id];
           if (isAdding) markVerbPracticingIfNew(id);
           const next = { ...prev, [id]: isAdding };
-          showToast(isAdding ? 'Saved to Vault! ⭐' : 'Removed from Vault');
           return next;
         });
       };
