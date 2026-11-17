@@ -110,17 +110,17 @@
           },
           colors: {
             arcade: {
-              space: '#060814',
-              deep: '#0a0e1f',
-              card: '#121730',
-              cardElevated: '#1a2244',
-              cyan: '#00E5FF',
-              emerald: '#00E676',
-              amber: '#FFB300',
-              pink: '#FF1744',
-              purple: '#7C4DFF',
-              lavender: '#d7d3ff',
-              muted: '#8f9bbb',
+              space: '#0B0F17',
+              deep: '#0F1520',
+              card: '#151C28',
+              cardElevated: '#1C2536',
+              cyan: '#38BDF8',
+              emerald: '#10B981',
+              amber: '#F59E0B',
+              pink: '#F43F5E',
+              purple: '#38BDF8',
+              lavender: '#F1F5F9',
+              muted: '#94A3B8',
             }
           },
           animation: {
@@ -192,8 +192,8 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      background-color: #060814;
-      color: #e3dfff;
+      background-color: #0B0F17;
+      color: #F1F5F9;
       font-family: 'Outfit', sans-serif;
       overflow: hidden;
       user-select: none;
@@ -203,29 +203,21 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Glassmorphism Styles */
+    /* Clean Flat Native Surfaces */
     .glass-dock {
-      background: rgba(10, 14, 31, 0.94);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: #0F1520;
     }
 
     .glass-card {
-      background: rgba(16, 22, 46, 0.82);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: #151C28;
     }
 
     .glass-pill {
-      background: rgba(24, 32, 62, 0.85);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: #1C2536;
     }
 
     .glass-hud {
-      background: rgba(8, 12, 26, 0.95);
-      backdrop-filter: blur(26px);
-      -webkit-backdrop-filter: blur(26px);
+      background: #0F1520;
     }
 
     /* 3D Perspective Card */
@@ -2495,7 +2487,7 @@
               <div className="relative z-10 flex flex-col items-center justify-center -translate-y-6">
                 <div 
                   className={`w-32 h-32 rounded-full p-1 flex items-center justify-center shadow-2xl transition-all duration-300 ${
-                    isPlayingAudio ? 'scale-110 shadow-[0_0_36px_rgba(0,229,255,0.9)]' : 'scale-100 shadow-[0_0_24px_rgba(0,0,0,0.8)]'
+                    isPlayingAudio ? 'scale-110 shadow-sm' : 'scale-100 shadow-sm'
                   }`}
                   style={{
                     background: `linear-gradient(135deg, ${accent}, #7C4DFF, #FF1744)`
@@ -2510,7 +2502,7 @@
 
                 <div className="mt-4 px-4 py-1.5 rounded-full bg-[#121730]/90 border border-white/20 flex items-center gap-2 shadow-xl backdrop-blur-xl">
                   <span className="w-2 h-2 rounded-full animate-ping" style={{ backgroundColor: accent }}></span>
-                  <span className="text-sm font-black tracking-widest text-white uppercase drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
+                  <span className="text-sm font-black tracking-widest text-white uppercase drop-shadow-sm">
                     {verb.verb}
                   </span>
                   <span className="text-[11px] font-mono text-slate-300">
@@ -3015,7 +3007,7 @@
                     title="Save to Vault"
                   >
                     <div className={`w-11 h-11 rounded-full glass-card flex items-center justify-center transition-all border ${
-                      isBookmarked ? 'border-cyan-400/60 bg-cyan-500/15 shadow-[0_0_16px_rgba(34,211,238,0.35)]' : 'border-white/10 text-slate-300'
+                      isBookmarked ? 'border-cyan-400/60 bg-cyan-500/15 shadow-sm' : 'border-white/10 text-slate-300'
                     }`}>
                       <svg 
                         xmlns="http://www.w3.org/2000/svg" 
@@ -3132,7 +3124,7 @@
                         sfx.playWhoosh();
                         containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className="px-4 py-2 rounded-full bg-gradient-to-r from-arcade-cyan via-arcade-emerald to-arcade-cyan text-black text-xs font-black shadow-[0_0_20px_rgba(0,229,255,0.8)] flex items-center gap-2 active:scale-95 transition-all hover:scale-105 border border-white/20"
+                      className="px-4 py-2 rounded-full bg-gradient-to-r from-arcade-cyan via-arcade-emerald to-arcade-cyan text-black text-xs font-black shadow-sm flex items-center gap-2 active:scale-95 transition-all hover:scale-105 border border-white/20"
                     >
                       <Icon name="zap" size={14} color="#060814"/>
                       <span>Next: Loop to Reel #1 {'\uD83D\uDD04'}</span>
@@ -3281,7 +3273,7 @@
             {/* Mini Progress Bar */}
             <div className="w-full h-2 rounded-full bg-black/60 overflow-hidden mb-3 p-0.5 border border-white/5">
               <div 
-                className="h-full rounded-full bg-gradient-to-r from-arcade-cyan via-arcade-emerald to-arcade-pink transition-all duration-500" 
+                className="h-full rounded-full bg-gradient-to-r from-arcade-cyan to-arcade-emerald transition-all duration-500" 
                 style={{ width: `${Math.min(100, (knowItCount / verbs.length) * 100)}%` }}
               ></div>
             </div>
@@ -3293,7 +3285,7 @@
                 onClick={() => { setVaultFilter(prev => prev === 'mastered' ? 'all' : 'mastered'); sfx.playBlip(560); }}
                 className={`p-2.5 rounded-xl border flex flex-col items-center transition-all cursor-pointer active:scale-95 ${
                   vaultFilter === 'mastered'
-                    ? 'ring-2 ring-cyan-400 bg-slate-800/90 border-cyan-400/50 shadow-[0_0_12px_rgba(34,211,238,0.3)]'
+                    ? 'ring-2 ring-cyan-400 bg-slate-800/90 border-cyan-400/50 shadow-sm'
                     : 'bg-black/40 border-white/5 hover:bg-black/60'
                 }`}
               >
@@ -3439,7 +3431,7 @@
 
                   {/* Verb Display Word & Phonetic */}
                   <div className="flex items-baseline gap-2">
-                    <h1 className="text-3xl font-black tracking-wide text-white drop-shadow-[0_0_12px_rgba(0,229,255,0.4)]">
+                    <h1 className="text-3xl font-black tracking-wide text-white drop-shadow-sm">
                       {heroVerb.verb.toUpperCase()}
                     </h1>
                     <span className="text-sm font-mono text-arcade-cyan">
@@ -3492,7 +3484,7 @@
                       className={`px-5 py-2.5 rounded-2xl text-xs font-black flex items-center justify-center gap-1.5 transition-all ${
                         isDailyMastered
                           ? 'bg-arcade-emerald/20 text-arcade-emerald border border-arcade-emerald/30 cursor-default'
-                          : 'bg-gradient-to-r from-arcade-emerald to-[#00b248] text-black shadow-[0_0_16px_rgba(0,230,118,0.5)] active:scale-95'
+                          : 'bg-gradient-to-r from-arcade-emerald to-[#00b248] text-black shadow-sm active:scale-95'
                       }`}
                     >
                       <Icon name="check" size={16} color={isDailyMastered ? '#00E676' : '#000000'}/>
@@ -3924,7 +3916,7 @@
                 className={`flex-1 py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md ${
                   isPracticedToday 
                     ? 'bg-arcade-emerald/20 text-arcade-emerald border border-arcade-emerald/30 cursor-default' 
-                    : 'bg-gradient-to-r from-arcade-pink to-orange-500 text-white shadow-[0_0_18px_rgba(255,23,68,0.7)] active:scale-95'
+                    : 'bg-gradient-to-r from-arcade-pink to-orange-500 text-white shadow-sm active:scale-95'
                 }`}
               >
                 <span>{isPracticedToday ? '\u2713 Practiced Today!' : '\uD83D\uDD25 Practice Today & Extend Streak (+25 XP)'}</span>
@@ -3966,7 +3958,7 @@
                 ) : (
                   <button
                     onClick={claimBlitzXp}
-                    className="mt-1 px-5 py-2 rounded-2xl bg-gradient-to-r from-arcade-emerald to-[#00b248] text-black text-xs font-black flex items-center justify-center gap-1.5 shadow-[0_0_16px_rgba(0,230,118,0.5)] active:scale-95 transition-all mx-auto"
+                    className="mt-1 px-5 py-2 rounded-2xl bg-gradient-to-r from-arcade-emerald to-[#00b248] text-black text-xs font-black flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all mx-auto"
                   >
                     <Icon name="zap" size={14} color="#000"/>
                     <span>Claim +{blitzFinalScore * 10} XP</span>
@@ -3983,7 +3975,7 @@
                 </p>
                 <button
                   onClick={startBlitz}
-                  className="px-8 py-3 rounded-2xl bg-gradient-to-r from-arcade-cyan to-arcade-purple text-white text-sm font-black flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,229,255,0.5)] active:scale-95 transition-all"
+                  className="px-8 py-3 rounded-2xl bg-gradient-to-r from-arcade-cyan to-arcade-purple text-white text-sm font-black flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all"
                 >
                   <Icon name="zap" size={18}/>
                   <span>Start Blitz!</span>
@@ -4159,8 +4151,8 @@
               <div className="relative flex-shrink-0">
                 <div className={`w-16 h-16 rounded-full p-0.5 flex items-center justify-center ${
                   levelInfo.isPrestige
-                    ? 'bg-gradient-to-tr from-amber-400 via-cyan-400 to-purple-500 shadow-[0_0_20px_rgba(251,191,36,0.65)]'
-                    : 'bg-gradient-to-tr from-arcade-cyan via-arcade-purple to-arcade-pink shadow-[0_0_18px_rgba(0,229,255,0.6)]'
+                    ? 'bg-gradient-to-tr from-arcade-cyan to-arcade-emerald shadow-sm'
+                    : 'bg-gradient-to-tr from-arcade-cyan via-arcade-purple to-arcade-pink shadow-sm'
                 }`}>
                   <div className="w-full h-full rounded-full bg-arcade-space flex items-center justify-center text-2xl">
                     {levelInfo.rankBadge}
@@ -4246,8 +4238,8 @@
                 <div 
                   className={`h-full rounded-full bg-gradient-to-r transition-all duration-500 ${
                     levelInfo.isPrestige
-                      ? 'from-amber-400 via-cyan-400 to-purple-500 shadow-[0_0_12px_rgba(251,191,36,0.7)]'
-                      : 'from-arcade-cyan via-arcade-emerald to-arcade-pink'
+                      ? 'from-arcade-cyan to-arcade-emerald shadow-sm'
+                      : 'from-arcade-cyan to-arcade-emerald'
                   }`}
                   style={{ width: `${levelInfo.progressPercent}%` }}
                 ></div>
@@ -4295,7 +4287,7 @@
                     key={trophy.id}
                     className={`p-3.5 rounded-2xl glass-card flex flex-col justify-between transition-all ${
                       isUnlocked
-                        ? 'border border-arcade-emerald/50 shadow-[0_0_16px_rgba(0,230,118,0.2)]'
+                        ? 'border border-arcade-emerald/50 shadow-sm'
                         : 'border border-white/10 shadow-md'
                     }`}
                   >
@@ -4320,7 +4312,7 @@
                         )}
                       </span>
                       {isUnlocked ? (
-                        <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-arcade-emerald/20 text-arcade-emerald border border-arcade-emerald/40 shadow-[0_0_10px_rgba(0,230,118,0.35)]">
+                        <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-arcade-emerald/20 text-arcade-emerald border border-arcade-emerald/40 shadow-sm">
                           ✓ Unlocked
                         </span>
                       ) : (
@@ -4347,7 +4339,7 @@
                         <div
                           className={`h-full rounded-full transition-all duration-500 ${
                             isUnlocked
-                              ? 'bg-gradient-to-r from-arcade-emerald to-arcade-cyan shadow-[0_0_8px_rgba(0,230,118,0.6)]'
+                              ? 'bg-gradient-to-r from-arcade-emerald to-arcade-cyan shadow-sm'
                               : 'bg-gradient-to-r from-arcade-cyan to-arcade-purple'
                           }`}
                           style={{ width: `${progressPct}%` }}
@@ -4991,7 +4983,7 @@ const [playerName, setPlayerName] = useState(() => {
           
           {/* Toast Notification */}
           {toastMsg && (
-            <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all flex items-center gap-2 px-4 py-2 rounded-full glass-hud shadow-[0_0_24px_rgba(0,229,255,0.4)] text-xs font-bold text-white border border-arcade-cyan/40 animate-bounce">
+            <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all flex items-center gap-2 px-4 py-2 rounded-full glass-hud shadow-sm text-xs font-bold text-white border border-arcade-cyan/40 animate-bounce">
               <Icon name="sparkles" size={16} color="#00E5FF"/>
               <span>{toastMsg}</span>
             </div>
@@ -5128,10 +5120,10 @@ const [playerName, setPlayerName] = useState(() => {
             {/* BOTTOM DOCK NAVIGATION BAR */}
             <nav className="flex-shrink-0 z-40 h-[72px] glass-dock px-3 flex items-center justify-around border-t border-white/10">
               {[
-                { key: 'reels', label: 'Reels', icon: 'reels', color: '#00E5FF' },
-                { key: 'deck', label: 'Deck', icon: 'deck', color: '#00E676' },
-                { key: 'quests', label: 'Quests', icon: 'quests', color: '#FFB300' },
-                { key: 'trophies', label: 'Trophies', icon: 'trophies', color: '#FF1744' },
+                { key: 'reels', label: 'Reels', icon: 'reels', color: '#38BDF8' },
+                { key: 'deck', label: 'Deck', icon: 'deck', color: '#38BDF8' },
+                { key: 'quests', label: 'Quests', icon: 'quests', color: '#38BDF8' },
+                { key: 'trophies', label: 'Trophies', icon: 'trophies', color: '#38BDF8' },
               ].map(tab => {
                 const isActive = activeTab === tab.key;
                 return (
@@ -5143,7 +5135,7 @@ const [playerName, setPlayerName] = useState(() => {
                     <div 
                       className={`relative w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-200 ${
                         isActive 
-                          ? 'shadow-[0_0_16px_rgba(0,229,255,0.6)] -translate-y-0.5' 
+                          ? 'shadow-sm -translate-y-0.5' 
                           : 'hover:bg-white/5'
                       }`}
                       style={{
@@ -5332,7 +5324,7 @@ const [playerName, setPlayerName] = useState(() => {
                         sfx.playGoalChime();
                         showToast('Voice settings saved!');
                       }}
-                      className="flex-1 py-2.5 rounded-xl bg-arcade-cyan text-black text-xs font-black shadow-[0_0_12px_rgba(0,229,255,0.4)] active:scale-95 transition-transform"
+                      className="flex-1 py-2.5 rounded-xl bg-arcade-cyan text-black text-xs font-black shadow-sm active:scale-95 transition-transform"
                     >
                       Save Settings
                     </button>
@@ -5367,7 +5359,7 @@ const [playerName, setPlayerName] = useState(() => {
                           key={i}
                           className={`h-1.5 rounded-full transition-all duration-300 ${
                             i === onboardingStep
-                              ? 'w-6 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]'
+                              ? 'w-6 bg-cyan-400 shadow-sm'
                               : 'w-1.5 bg-slate-700'
                           }`}
                         />
@@ -5393,7 +5385,7 @@ const [playerName, setPlayerName] = useState(() => {
                       className="w-16 h-16 mx-auto rounded-2xl shadow-lg mb-4 object-contain"
                     />
                   ) : (
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-3xl mb-4 shadow-[0_0_20px_rgba(34,211,238,0.15)]">
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-3xl mb-4 shadow-sm">
                       {slide.icon}
                     </div>
                   )}
@@ -5437,7 +5429,7 @@ const [playerName, setPlayerName] = useState(() => {
                           setOnboardingStep(s => s + 1);
                         }
                       }}
-                      className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 text-xs font-black shadow-[0_0_16px_rgba(34,211,238,0.45)] hover:brightness-110 transition-all active:scale-95"
+                      className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 text-xs font-black shadow-sm hover:brightness-110 transition-all active:scale-95"
                     >
                       {isLast ? 'Start Learning 🚀' : 'Next →'}
                     </button>
