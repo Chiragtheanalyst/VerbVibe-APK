@@ -4083,7 +4083,7 @@
     // ========================================================
     // TAB 4: TROPHIES (IMPROVED NAME CARD & NO JUNIOR LEAGUE)
     // ========================================================
-    const TrophiesTab = ({ xp, streak, playerName, setPlayerName, trophyStats = {}, savedVerbIds = {}, claimedTrophies = {}, onClaimTrophy }) => {
+    const TrophiesTab = ({ xp, streak, playerName, setPlayerName, trophyStats = {}, savedVerbIds = {} }) => {
       const [isEditingName, setIsEditingName] = useState(false);
       const [nameInput, setNameInput] = useState(playerName);
 
@@ -4280,15 +4280,11 @@
               {trophies.map(trophy => {
                 const { currentVal, isUnlocked, progressPct } = getTrophyProgress(trophy);
                 const displayVal = Math.min(currentVal, trophy.target);
-                const isClaimed = !!claimedTrophies[trophy.id];
-                const canClaim = isUnlocked && !isClaimed;
                 return (
                   <div
                     key={trophy.id}
                     className={`p-3.5 rounded-2xl glass-card flex flex-col justify-between transition-all ${
-                      canClaim
-                        ? 'border border-amber-400/70 shadow-[0_0_18px_rgba(251,191,36,0.28)]'
-                        : isUnlocked
+                      isUnlocked
                         ? 'border border-arcade-emerald/50 shadow-[0_0_16px_rgba(0,230,118,0.2)]'
                         : 'border border-white/10 shadow-md'
                     }`}
@@ -4297,13 +4293,9 @@
                       <span className={`text-xl ${isUnlocked ? 'drop-shadow-[0_0_8px_rgba(0,230,118,0.6)]' : 'opacity-75 grayscale-[30%]'}`}>
                         {trophy.icon}
                       </span>
-                      {isClaimed ? (
-                        <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-arcade-emerald/20 text-arcade-emerald border border-arcade-emerald/40">
-                          ✓ Claimed
-                        </span>
-                      ) : canClaim ? (
-                        <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 animate-pulse">
-                          Ready!
+                      {isUnlocked ? (
+                        <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-arcade-emerald/20 text-arcade-emerald border border-arcade-emerald/40 shadow-[0_0_10px_rgba(0,230,118,0.35)]">
+                          ✓ Unlocked
                         </span>
                       ) : (
                         <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-black/40 text-slate-300 border border-white/10">
@@ -4315,7 +4307,7 @@
                       <div className="flex items-center justify-between gap-1">
                         <h4 className="text-xs font-bold text-white">{trophy.title}</h4>
                         <span className={`text-[9px] font-mono font-extrabold px-1.5 py-0.5 rounded-md whitespace-nowrap ${
-                          isClaimed
+                          isUnlocked
                             ? 'bg-arcade-emerald/20 text-arcade-emerald border border-arcade-emerald/30'
                             : 'bg-amber-500/15 text-amber-300 border border-amber-400/30'
                         }`}>
@@ -4325,26 +4317,16 @@
                       <p className="text-[10px] text-slate-400 mt-0.5 leading-snug">{trophy.desc}</p>
                     </div>
                     <div className="mt-2.5 pt-1.5 border-t border-white/5">
-                      {canClaim ? (
-                        <button
-                          type="button"
-                          onClick={() => handleClaimTrophy(trophy)}
-                          className="w-full py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[11px] font-black tracking-wide shadow-[0_0_12px_rgba(251,191,36,0.45)] active:scale-95 transition-transform cursor-pointer"
-                        >
-                          Claim
-                        </button>
-                      ) : (
-                        <div className="w-full h-1.5 rounded-full bg-black/50 overflow-hidden border border-white/5">
-                          <div
-                            className={`h-full rounded-full transition-all duration-500 ${
-                              isUnlocked
-                                ? 'bg-gradient-to-r from-arcade-emerald to-arcade-cyan shadow-[0_0_8px_rgba(0,230,118,0.6)]'
-                                : 'bg-gradient-to-r from-arcade-cyan to-arcade-purple'
-                            }`}
-                            style={{ width: `${progressPct}%` }}
-                          />
-                        </div>
-                      )}
+                      <div className="w-full h-1.5 rounded-full bg-black/50 overflow-hidden border border-white/5">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            isUnlocked
+                              ? 'bg-gradient-to-r from-arcade-emerald to-arcade-cyan shadow-[0_0_8px_rgba(0,230,118,0.6)]'
+                              : 'bg-gradient-to-r from-arcade-cyan to-arcade-purple'
+                          }`}
+                          style={{ width: `${progressPct}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
                 );
@@ -4563,27 +4545,64 @@
         } catch(e) { return 0; }
       });
 
-      
 
-      // Track manually claimed Trophy XP rewards
-      const [claimedTrophies, setClaimedTrophies] = useState(() => {
-        try {
-          return JSON.parse(localStorage.getItem('verbvibe_claimed_trophies')) || {};
-        } catch(e) { return {}; }
-      });
 
-      const handleClaimTrophy = (trophy) => {
-        if (!trophy || claimedTrophies[trophy.id]) return;
-        const reward = trophy.xpReward || 10;
-        const updated = { ...claimedTrophies, [trophy.id]: true };
-        setClaimedTrophies(updated);
-        try { localStorage.setItem('verbvibe_claimed_trophies', JSON.stringify(updated)); } catch(e) {}
-        setXp(prev => prev + reward);
-        sfx.playGoalChime();
-        if (typeof showToast === 'function') {
-          showToast(`🏆 Claimed +${reward} XP from ${trophy.title}!`);
+      // Automatically award tiered XP once when any Trophy is completed
+      useEffect(() => {
+        const TROPHY_RULES = [
+          { id: 'first_step', title: 'First Action', target: 1, statKey: 'reelsViewed', xp: 10 },
+          { id: 'accent_explorer', title: 'Accent Explorer', target: 1, statKey: 'accentChanged', xp: 15 },
+          { id: 'quest_starter', title: 'Quest Hunter', target: 1, statKey: 'questsCompleted', xp: 20 },
+          { id: 'sharp_ears', title: 'Sharp Ears', target: 10, statKey: 'audioPlayed', xp: 20 },
+          { id: 'tense_shifter', title: 'Tense Shifter', target: 10, statKey: 'tensesSwitched', xp: 20 },
+          { id: 'deck_collector', title: 'Deck Collector', target: 5, statKey: 'savedCount', xp: 25 },
+          { id: 'reel_explorer', title: 'Reel Explorer', target: 15, statKey: 'reelsViewed', xp: 30 },
+          { id: 'streak_keeper', title: 'Consistent Learner', target: 3, statKey: 'streak', xp: 40 },
+          { id: 'time_traveler', title: 'Time Traveler', target: 30, statKey: 'tensesSwitched', xp: 50 },
+          { id: 'polyglot_ear', title: 'Audio Enthusiast', target: 35, statKey: 'audioPlayed', xp: 50 },
+          { id: 'deck_curator', title: 'Master Curator', target: 20, statKey: 'savedCount', xp: 60 },
+          { id: 'quest_veteran', title: 'Quest Veteran', target: 5, statKey: 'questsCompleted', xp: 75 },
+          { id: 'action_master', title: 'Action Addict', target: 50, statKey: 'reelsViewed', xp: 80 },
+          { id: 'xp_champion', title: 'XP Champion', target: 250, statKey: 'xp', xp: 80 },
+          { id: 'grammar_guru', title: 'Grammar Guru', target: 75, statKey: 'tensesSwitched', xp: 100 },
+          { id: 'half_library', title: 'Vault Architect', target: 40, statKey: 'savedCount', xp: 110 },
+          { id: 'sound_virtuoso', title: 'Sound Virtuoso', target: 100, statKey: 'audioPlayed', xp: 120 },
+          { id: 'full_roster', title: 'Verb Completionist', target: 82, statKey: 'reelsViewed', xp: 150 },
+          { id: 'xp_legend', title: 'XP Legend', target: 500, statKey: 'xp', xp: 150 },
+          { id: 'xp_grandmaster', title: 'VerbVibe Grandmaster', target: 1000, statKey: 'xp', xp: 250 },
+          { id: 'xp_prestige', title: 'Prestige Ascendant', target: 2000, statKey: 'xp', xp: 400 },
+          { id: 'xp_immortal', title: 'Immortal Linguist', target: 3500, statKey: 'xp', xp: 600 },
+        ];
+
+        let claimed = {};
+        try { claimed = JSON.parse(localStorage.getItem('verbvibe_claimed_trophies') || '{}'); } catch(e) {}
+
+        const savedCountNow = Object.keys(savedVerbIds || {}).filter(id => !!savedVerbIds[id]).length;
+        let bonusXp = 0;
+        let lastTitle = '';
+
+        TROPHY_RULES.forEach(t => {
+          if (claimed[t.id]) return;
+          const val = t.statKey === 'savedCount' ? savedCountNow
+                    : t.statKey === 'xp' ? xp
+                    : t.statKey === 'streak' ? (streak || 1)
+                    : (trophyStats[t.statKey] || 0);
+          if (val >= t.target) {
+            claimed[t.id] = true;
+            bonusXp += t.xp;
+            lastTitle = t.title;
+          }
+        });
+
+        if (bonusXp > 0) {
+          try { localStorage.setItem('verbvibe_claimed_trophies', JSON.stringify(claimed)); } catch(e) {}
+          setXp(prev => prev + bonusXp);
+          try { sfx.playGoalChime(); } catch(e) {}
+          if (typeof showToast === 'function') {
+            showToast(`🏆 ${lastTitle} Unlocked! +${bonusXp} XP`);
+          }
         }
-      };
+      }, [trophyStats, savedVerbIds, streak, xp]);
 
       // Sync XP to localStorage whenever it changes
       useEffect(() => {
@@ -5051,8 +5070,7 @@ const [playerName, setPlayerName] = useState(() => {
                   playerName={playerName}
                   setPlayerName={setPlayerName}
                   trophyStats={trophyStats}
-                  savedVerbIds={savedVerbIds}
-                 setXp={setXp} showToast={showToast} />
+                  savedVerbIds={savedVerbIds} />
               )}
             </main>
 
