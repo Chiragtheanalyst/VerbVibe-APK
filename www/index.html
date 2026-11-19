@@ -2866,8 +2866,7 @@
             if (activeReelIdx < verbs.length - 1) {
               container.scrollTo({ top: (activeReelIdx + 1) * cardHeight, behavior: 'smooth' });
             } else {
-              // Loop back to reel 1
-              container.scrollTo({ top: 0, behavior: 'smooth' });
+              loopToFirstReel();
             }
           } else if (e.key === 'ArrowUp') {
             e.preventDefault();
@@ -2884,6 +2883,31 @@
         return () => window.removeEventListener('keydown', handleKeyDown);
       }, [activeReelIdx, verbs.length, speakSentence]);
 
+      const loopToFirstReel = () => {
+        const container = containerRef.current;
+        if (!container) return;
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+        sfx.playWhoosh();
+        setActiveReelIdx(0);
+        try {
+          localStorage.setItem('verbvibe_last_reel_idx', '0');
+        } catch (e) {}
+        container.style.scrollSnapType = 'none';
+        container.scrollTop = 0;
+        const firstCard = container.querySelector('.reel-card[data-index="0"]');
+        if (firstCard) {
+          firstCard.scrollIntoView({ behavior: 'auto' });
+        }
+        requestAnimationFrame(() => {
+          container.scrollTop = 0;
+          setTimeout(() => {
+            container.style.scrollSnapType = '';
+          }, 60);
+        });
+      };
+
       // Seamless Loop to Reel 1 when scrolling/swiping past the last reel
       useEffect(() => {
         const container = containerRef.current;
@@ -2895,21 +2919,23 @@
         const onTouchStart = (e) => {
           touchStartY = e.touches[0].clientY;
           const maxScroll = container.scrollHeight - container.clientHeight;
-          isAtBottom = container.scrollTop >= maxScroll - 15;
+          isAtBottom = container.scrollTop >= maxScroll - 24;
         };
 
         const onTouchEnd = (e) => {
           const deltaY = touchStartY - e.changedTouches[0].clientY;
-          if (isAtBottom && deltaY > 35 && activeReelIdx >= verbs.length - 1) {
-            container.scrollTo({ top: 0, behavior: 'smooth' });
+          const maxScroll = container.scrollHeight - container.clientHeight;
+          const stillAtBottom = container.scrollTop >= maxScroll - 24;
+          if ((isAtBottom || stillAtBottom) && deltaY > 30 && activeReelIdx >= verbs.length - 1) {
+            loopToFirstReel();
           }
         };
 
         const onWheel = (e) => {
           const maxScroll = container.scrollHeight - container.clientHeight;
-          if (e.deltaY > 15 && container.scrollTop >= maxScroll - 5 && activeReelIdx >= verbs.length - 1) {
+          if (e.deltaY > 15 && container.scrollTop >= maxScroll - 15 && activeReelIdx >= verbs.length - 1) {
             e.preventDefault();
-            container.scrollTo({ top: 0, behavior: 'smooth' });
+            loopToFirstReel();
           }
         };
 
@@ -3124,14 +3150,11 @@
                 {idx === verbs.length - 1 && (
                   <div className="absolute top-14 inset-x-0 z-30 flex justify-center pointer-events-auto">
                     <button
-                      onClick={() => {
-                        sfx.playWhoosh();
-                        containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className="px-4 py-2 rounded-full bg-gradient-to-r from-arcade-cyan via-arcade-emerald to-arcade-cyan text-black text-xs font-black shadow-sm flex items-center gap-2 active:scale-95 transition-all hover:scale-105 border border-white/20"
+                      onClick={loopToFirstReel}
+                      className="px-4 py-2 rounded-full bg-arcade-cyan text-black text-xs font-black shadow-sm flex items-center gap-2 active:scale-95 transition-all hover:scale-105 border border-white/20"
                     >
-                      <Icon name="zap" size={14} color="#060814"/>
-                      <span>Next: Loop to Reel #1 {'\uD83D\uDD04'}</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                      <span>Next: Loop to Reel #1</span>
                     </button>
                   </div>
                 )}
@@ -5546,7 +5569,7 @@ const [playerName, setPlayerName] = useState(() => {
     const swipedUp = (startY - endY) > 45;
     const stillAtBottom = (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 15);
     if (swipedUp && stillAtBottom) {
-      scroller.scrollTo({ top: 0, behavior: 'smooth' });
+      scroller.style.scrollSnapType = 'none'; scroller.scrollTop = 0; requestAnimationFrame(() => { scroller.style.scrollSnapType = ''; });
     }
     startedAtBottom = false;
   }, { passive: true });
@@ -5558,7 +5581,7 @@ const [playerName, setPlayerName] = useState(() => {
     const atBottom = (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 15);
     if (atBottom && e.deltaY > 25) {
       wheelLock = true;
-      scroller.scrollTo({ top: 0, behavior: 'smooth' });
+      scroller.style.scrollSnapType = 'none'; scroller.scrollTop = 0; requestAnimationFrame(() => { scroller.style.scrollSnapType = ''; });
       setTimeout(() => { wheelLock = false; }, 700);
     }
   }, { passive: true });
