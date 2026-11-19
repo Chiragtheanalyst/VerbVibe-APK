@@ -114,11 +114,11 @@
               deep: '#09090B',
               card: '#121215',
               cardElevated: '#1C1C21',
-              cyan: '#F59E0B',
+              cyan: 'rgb(var(--vv-accent-rgb) / <alpha-value>)',
               emerald: '#10B981',
               amber: '#F59E0B',
               pink: '#F43F5E',
-              purple: '#F59E0B',
+              purple: 'rgb(var(--vv-accent-rgb) / <alpha-value>)',
               lavender: '#FAFAFA',
               muted: '#A1A1AA',
             }
@@ -182,6 +182,10 @@
   </script>
 
   <style>
+    :root {
+      --vv-accent: #F59E0B;
+      --vv-accent-rgb: 245 158 11;
+    }
     *, *::before, *::after {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
@@ -4543,6 +4547,30 @@
         }
       }, [lastReelIdx, activeTab]);
 
+      const THEME_PRESETS = [
+        { id: 'amber', name: 'Amber', hex: '#F59E0B', rgb: '245 158 11' },
+        { id: 'sky', name: 'Sky', hex: '#38BDF8', rgb: '56 189 248' },
+        { id: 'emerald', name: 'Emerald', hex: '#10B981', rgb: '16 185 129' },
+        { id: 'violet', name: 'Violet', hex: '#A78BFA', rgb: '167 139 250' },
+        { id: 'rose', name: 'Coral', hex: '#FB7185', rgb: '251 113 133' },
+        { id: 'white', name: 'Mono', hex: '#F8FAFC', rgb: '248 250 252' }
+      ];
+
+      const [themeAccent, setThemeAccent] = useState(() => {
+        try {
+          return localStorage.getItem('verbvibe_theme_accent') || '#F59E0B';
+        } catch(e) { return '#F59E0B'; }
+      });
+
+      useEffect(() => {
+        const preset = THEME_PRESETS.find(p => p.hex === themeAccent) || THEME_PRESETS[0];
+        document.documentElement.style.setProperty('--vv-accent', preset.hex);
+        document.documentElement.style.setProperty('--vv-accent-rgb', preset.rgb);
+        try {
+          localStorage.setItem('verbvibe_theme_accent', preset.hex);
+        } catch(e) {}
+      }, [themeAccent]);
+
       const [savedVerbIds, setSavedVerbIds] = useState(() => {
         try {
           const s = localStorage.getItem('verbvibe_saved_verbs');
@@ -5138,7 +5166,7 @@ const [playerName, setPlayerName] = useState(() => {
                           : 'hover:bg-white/5'
                       }`}
                       style={{
-                        backgroundColor: isActive ? tab.color : 'transparent',
+                        backgroundColor: isActive ? themeAccent : 'transparent',
                       }}
                     >
                       <Icon 
@@ -5166,12 +5194,56 @@ const [playerName, setPlayerName] = useState(() => {
                 <div className="relative w-full glass-hud rounded-t-3xl sm:rounded-3xl p-5 flex flex-col gap-4 border border-arcade-cyan/30 shadow-2xl z-10 max-h-[85vh] overflow-y-auto">
                   <div className="flex items-center justify-between pb-2 border-b border-white/10">
                     <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                      <Icon name="settings" size={16} color="#F59E0B"/>
-                      <span>Audio & Voice Settings</span>
+                      <Icon name="settings" size={16} color={themeAccent}/>
+                      <span>App & Voice Settings</span>
                     </h3>
                     <button onClick={() => setIsSettingsOpen(false)} className="w-7 h-7 rounded-full glass-pill flex items-center justify-center text-slate-300">
                       <Icon name="x" size={14}/>
                     </button>
+                  </div>
+
+                  {/* Accent Color Theme Switcher */}
+                  <div className="space-y-2 pb-1 border-b border-white/10">
+                    <div className="flex justify-between items-center text-xs text-slate-300">
+                      <span className="font-medium">App Accent Color</span>
+                      <span className="font-mono text-[11px] font-bold text-arcade-cyan">
+                        {(THEME_PRESETS.find(p => p.hex === themeAccent) || THEME_PRESETS[0]).name}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-6 gap-2 pt-0.5 pb-2">
+                      {THEME_PRESETS.map(preset => {
+                        const isSelected = themeAccent === preset.hex;
+                        return (
+                          <button
+                            key={preset.id}
+                            type="button"
+                            onClick={() => {
+                              setThemeAccent(preset.hex);
+                              sfx.playBlip(680);
+                            }}
+                            className={`flex flex-col items-center gap-1 py-2 px-1 rounded-xl border transition-all active:scale-95 ${
+                              isSelected
+                                ? 'bg-white/10 border-white/50'
+                                : 'bg-black/40 border-white/10 hover:border-white/25'
+                            }`}
+                          >
+                            <span
+                              className="w-5 h-5 rounded-full border border-black/40 flex items-center justify-center"
+                              style={{ backgroundColor: preset.hex }}
+                            >
+                              {isSelected && (
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                              )}
+                            </span>
+                            <span className={`text-[10px] font-bold ${isSelected ? 'text-white' : 'text-slate-400'}`}>
+                              {preset.name}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Speech Rate Slider */}
@@ -5249,7 +5321,7 @@ const [playerName, setPlayerName] = useState(() => {
                             }}
                             className="px-2.5 py-1 rounded-lg bg-arcade-cyan/15 text-arcade-cyan text-[11px] font-bold border border-arcade-cyan/30 hover:bg-arcade-cyan/25 flex items-center gap-1.5 active:scale-95 transition-all shadow-sm"
                           >
-                            <Icon name="volume" size={13} color="#F59E0B"/>
+                            <Icon name="volume" size={13} color={themeAccent}/>
                             <span>Test Accent</span>
                           </button>
                         </div>
