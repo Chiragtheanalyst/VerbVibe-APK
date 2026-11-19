@@ -4393,9 +4393,9 @@
       },
       {
         badge: 'Verb Vault',
-        title: 'Flashcard, Saved & Full Tenses',
-        desc: 'Search and filter all 82 verbs by category, bookmark favorites to Saved, mark mastered words with Know It! (+10 XP), practice Today’s Flashcard (+15 XP), and view full Tenses breakdowns.',
-        highlight: 'Know It! • Saved • Tenses'
+        title: 'Flashcard, Saved & Know It!',
+        desc: 'Search and filter all 82 verbs by category, bookmark favorites to Saved, mark mastered words with Know It! (+10 XP), and practice Today’s Flashcard (+15 XP).',
+        highlight: 'Know It! • Saved • Flashcard'
       },
       {
         badge: 'Quests Tab',
@@ -5423,7 +5423,7 @@ const [playerName, setPlayerName] = useState(() => {
             const slide = ONBOARDING_SLIDES[onboardingStep] || ONBOARDING_SLIDES[0];
             const isLast = onboardingStep >= ONBOARDING_SLIDES.length - 1;
             return (
-              <div className="fixed inset-0 z-50 bg-black/92 backdrop-blur-md flex items-center justify-center p-4">
+              <div data-onboarding-modal="true" className="fixed inset-0 z-50 bg-black/92 backdrop-blur-md flex items-center justify-center p-4">
                 <div className="bg-[#000000] border border-white/15 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl">
                   {/* Top Row: Step Indicator Dots + Skip */}
                   <div className="flex items-center justify-between mb-6">
@@ -5844,9 +5844,11 @@ const [playerName, setPlayerName] = useState(() => {
   function cleanVaultAndWireTenses() {
     const reelVerbs = getOrderedReelVerbs();
 
-    // Add "Tenses" button in Verb Vault header
-    const vaultHeaders = Array.from(document.querySelectorAll('h1, h2, h3, div')).filter(el =>
-      el.children.length === 0 && /Verb Vault/i.test(el.textContent || '')
+    // Add "Tenses" button in Verb Vault header (never inside onboarding modal)
+    const vaultHeaders = Array.from(document.querySelectorAll('h1, h2, h3')).filter(el =>
+      el.children.length === 0 &&
+      el.textContent.trim() === 'Verb Vault' &&
+      !el.closest('[data-onboarding-modal="true"]')
     );
     vaultHeaders.forEach(hdr => {
       const parent = hdr.parentElement;
