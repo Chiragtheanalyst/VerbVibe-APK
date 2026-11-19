@@ -4380,38 +4380,34 @@
     const ONBOARDING_SLIDES = [
       {
         badge: 'Welcome to VerbVibe',
-        icon: 'logo',
-        title: 'Learn Action Verbs the Fun Way!',
-        desc: 'VerbVibe turns 82+ everyday English action verbs into short, lively anime video reels so you can see every word in action instead of memorizing boring lists.',
+        showLogo: true,
+        title: 'Learn 82 Action Verbs Visually',
+        desc: 'VerbVibe turns 82 everyday English action verbs into short, looping anime video reels so you can see each word in action instead of memorizing plain lists.',
         highlight: 'Watch • Listen • Speak'
       },
       {
-        badge: 'Why VerbVibe?',
-        icon: '🎬',
-        title: 'See It, Hear It, Remember It',
-        desc: 'Connecting visual motion with real sentences helps your brain lock in new words faster—perfect for building confident spoken English every day.',
-        highlight: 'Swipe up & down through 82+ action reels'
-      },
-      {
         badge: 'Interactive Reels',
-        icon: '⏳',
         title: 'Switch Tenses & Tap to Listen',
-        desc: 'Toggle between Present, Past, and Continuous forms on any reel, and tap the word or sentence to hear clear pronunciation with live word-by-word highlighting.',
+        desc: 'Swipe vertically through all 82 action reels, switch between Present, Past, and Continuous tenses, and tap any word or sentence for pronunciation with live word-by-word highlighting.',
         highlight: 'Present • Past • Continuous'
       },
       {
-        badge: 'Quests Tab',
-        icon: '⭐',
-        title: 'Daily Quests & Flashcard Challenges',
-        desc: 'Open the Quests tab to play Today’s Flashcard, complete fun mini-challenges, keep your daily learning streak alive, and earn bonus XP every day.',
-        highlight: 'Play Daily • Build Streaks • Level Up'
+        badge: 'Verb Vault',
+        title: 'Flashcard, Saved & Full Tenses',
+        desc: 'Search and filter all 82 verbs by category, bookmark favorites to Saved, mark mastered words with Know It! (+10 XP), practice Today’s Flashcard (+15 XP), and view full Tenses breakdowns.',
+        highlight: 'Know It! • Saved • Tenses'
       },
       {
-        badge: 'Vault & Trophies',
-        icon: '🏆',
-        title: 'Master Words & Unlock Trophies',
-        desc: 'Save verbs to your Verb Vault, tap "Know It!" as you master them, climb endless XP prestige ranks, and unlock all 20 achievement trophies!',
-        highlight: 'Ready to start your streak?'
+        badge: 'Quests Tab',
+        title: 'Day Streak & Grammar Blitz',
+        desc: 'Open the Quests tab to check in and extend your Day Streak (+25 XP) and take on the Daily Grammar Blitz—a 30-second timed quiz to test your verb forms.',
+        highlight: 'Day Streak • 30s Grammar Blitz'
+      },
+      {
+        badge: 'Ranks & Trophies',
+        title: 'Climb 7 Ranks & Unlock 20 Trophies',
+        desc: 'Earn XP across reels, flashcards, and quizzes to rise through 7 rank tiers—from Rookie Learner to Mythic Verb Deity—and unlock all 20 achievement trophies.',
+        highlight: '7 Rank Tiers • 20 Trophies'
       }
     ];
 
@@ -5427,18 +5423,19 @@ const [playerName, setPlayerName] = useState(() => {
             const slide = ONBOARDING_SLIDES[onboardingStep] || ONBOARDING_SLIDES[0];
             const isLast = onboardingStep >= ONBOARDING_SLIDES.length - 1;
             return (
-              <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-                <div className="bg-[#0B0E1B] border border-cyan-500/30 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl">
+              <div className="fixed inset-0 z-50 bg-black/92 backdrop-blur-md flex items-center justify-center p-4">
+                <div className="bg-[#000000] border border-white/15 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl">
                   {/* Top Row: Step Indicator Dots + Skip */}
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-1.5">
                       {ONBOARDING_SLIDES.map((_, i) => (
                         <span
                           key={i}
+                          style={i === onboardingStep ? { backgroundColor: 'var(--vv-accent, #F59E0B)' } : undefined}
                           className={`h-1.5 rounded-full transition-all duration-300 ${
                             i === onboardingStep
-                              ? 'w-6 bg-cyan-400 shadow-sm'
-                              : 'w-1.5 bg-slate-700'
+                              ? 'w-6'
+                              : 'w-1.5 bg-white/15'
                           }`}
                         />
                       ))}
@@ -5449,36 +5446,42 @@ const [playerName, setPlayerName] = useState(() => {
                         sfx.playBlip(480);
                         completeOnboarding();
                       }}
-                      className="text-xs font-semibold text-slate-400 hover:text-white transition-colors px-2 py-1"
+                      className="text-xs font-semibold text-neutral-400 hover:text-white transition-colors px-2 py-1"
                     >
                       Skip
                     </button>
                   </div>
 
-                  {/* Visual Centerpiece */}
-                  {slide.icon === 'logo' ? (
+                  {/* App Logo on Welcome Slide Only */}
+                  {slide.showLogo && (
                     <img
                       src="./assets/logo.png"
                       alt="VerbVibe"
-                      className="w-16 h-16 mx-auto rounded-2xl shadow-lg mb-4 object-contain"
+                      className="w-16 h-16 mx-auto rounded-2xl border border-white/10 shadow-lg mb-4 object-contain"
                     />
-                  ) : (
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-3xl mb-4 shadow-sm">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-                    </div>
                   )}
 
                   {/* Badge, Title, Description & Highlight */}
-                  <div className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-1">
+                  <div
+                    style={{ color: 'var(--vv-accent, #F59E0B)' }}
+                    className="text-[11px] font-bold uppercase tracking-widest mb-1.5"
+                  >
                     {slide.badge}
                   </div>
-                  <h2 className="text-xl font-bold text-white mb-2">
+                  <h2 className="text-xl font-black text-white mb-2.5 tracking-tight">
                     {slide.title}
                   </h2>
-                  <p className="text-sm text-slate-300 leading-relaxed mb-4">
+                  <p className="text-sm text-neutral-300 leading-relaxed mb-5">
                     {slide.desc}
                   </p>
-                  <div className="inline-block px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-xs font-semibold text-cyan-300 mb-6">
+                  <div
+                    style={{
+                      color: 'var(--vv-accent, #F59E0B)',
+                      borderColor: 'color-mix(in srgb, var(--vv-accent, #F59E0B) 35%, transparent)',
+                      backgroundColor: 'color-mix(in srgb, var(--vv-accent, #F59E0B) 10%, #121215)'
+                    }}
+                    className="inline-block px-3.5 py-1.5 rounded-full border text-xs font-semibold mb-6"
+                  >
                     {slide.highlight}
                   </div>
 
@@ -5491,7 +5494,7 @@ const [playerName, setPlayerName] = useState(() => {
                           sfx.playBlip(460);
                           setOnboardingStep(s => Math.max(0, s - 1));
                         }}
-                        className="flex-1 py-3 rounded-2xl bg-slate-800/80 border border-white/10 text-xs font-bold text-slate-200 hover:bg-slate-700/80 transition-all active:scale-95"
+                        className="flex-1 py-3 rounded-2xl bg-[#121215] border border-white/12 text-xs font-bold text-neutral-200 hover:bg-white/10 transition-all active:scale-95"
                       >
                         Back
                       </button>
@@ -5507,7 +5510,8 @@ const [playerName, setPlayerName] = useState(() => {
                           setOnboardingStep(s => s + 1);
                         }
                       }}
-                      className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 text-xs font-black shadow-sm hover:brightness-110 transition-all active:scale-95"
+                      style={{ backgroundColor: 'var(--vv-accent, #F59E0B)', color: '#000000' }}
+                      className="flex-1 py-3 rounded-2xl text-xs font-black shadow-sm hover:brightness-110 transition-all active:scale-95"
                     >
                       {isLast ? 'Start Learning' : 'Next →'}
                     </button>
