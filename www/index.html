@@ -3269,7 +3269,6 @@
           localStorage.setItem('verbvibe_daily_blitz_mastered_date', todayDateStr);
         } catch(e) {}
         if (setXp) setXp(prev => prev + 15);
-        if (showToast) showToast('Mastered flashcard! +15 XP');
       };
 
       return (
@@ -4665,9 +4664,7 @@
           try { localStorage.setItem('verbvibe_claimed_trophies', JSON.stringify(claimed)); } catch(e) {}
           setXp(prev => prev + bonusXp);
           try { sfx.playGoalChime(); } catch(e) {}
-          if (typeof showToast === 'function') {
-            showToast(`${lastTitle} Unlocked! +${bonusXp} XP`);
-          }
+
         }
       }, [trophyStats, savedVerbIds, streak, xp]);
 
@@ -4756,7 +4753,6 @@ const [playerName, setPlayerName] = useState(() => {
           localStorage.setItem('verbvibe_streak', newStreak.toString());
         } catch(e){}
         sfx.playGoalChime();
-        showToast(`Streak Extended to ${newStreak} Days! +25 XP`);
       };
 
       // Save bookmarks to localStorage
@@ -5074,7 +5070,6 @@ const [playerName, setPlayerName] = useState(() => {
                   onClick={() => {
                     setIsMuted(!isMuted);
                     sfx.playBlip(isMuted ? 660 : 300);
-                    showToast(isMuted ? 'Audio Unmuted' : 'Audio Muted');
                   }}
                   className="w-8 h-8 rounded-full glass-pill flex items-center justify-center text-arcade-cyan hover:border-arcade-cyan transition-all"
                   title="Toggle Mute"
@@ -5115,7 +5110,6 @@ const [playerName, setPlayerName] = useState(() => {
                   trackTrophyAction={trackTrophyAction}
                   onPracticeClick={() => {
                     handleTabSwitch('quests');
-                    showToast('Take today\'s practice challenge!');
                   }}
                 />
               </div>
@@ -5399,7 +5393,6 @@ const [playerName, setPlayerName] = useState(() => {
                             localStorage.setItem('verbvibe_selected_voice', defaultUri);
                           } catch(e) {}
                         }
-                        showToast('Reset to Indian English default!');
                         if (defaultUri) testVoice(defaultUri);
                       }}
                       className="flex-1 py-2.5 rounded-xl glass-pill text-xs font-bold text-slate-300 hover:text-white"
@@ -5410,7 +5403,6 @@ const [playerName, setPlayerName] = useState(() => {
                       onClick={() => {
                         setIsSettingsOpen(false);
                         sfx.playGoalChime();
-                        showToast('Voice settings saved!');
                       }}
                       className="flex-1 py-2.5 rounded-xl bg-arcade-cyan text-black text-xs font-black shadow-sm active:scale-95 transition-transform"
                     >
