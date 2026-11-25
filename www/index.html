@@ -5917,9 +5917,9 @@ const [playerName, setPlayerName] = useState(() => {
   <script>
     (function () {
       const AD_UNITS = {
-        QUESTS_BANNER: 'ca-app-pub-3940256099942544/9214589741',      // Adaptive Banner (Test)
-        QUIZ_INTERSTITIAL: 'ca-app-pub-3940256099942544/1033173712',  // Interstitial (Test)
-        DOUBLE_XP_REWARDED: 'ca-app-pub-3940256099942544/5224354917', // Rewarded Video (Test)
+        QUESTS_BANNER: 'ca-app-pub-8270398368993554/1946178382',      // Adaptive Banner (Test)
+        QUIZ_INTERSTITIAL: 'ca-app-pub-8270398368993554/9473635412',  // Interstitial (Test)
+        DOUBLE_XP_REWARDED: 'ca-app-pub-8270398368993554/5750012829', // Rewarded Video (Test)
       };
 
       let initialized = false;
@@ -5962,7 +5962,7 @@ const [playerName, setPlayerName] = useState(() => {
             adSize: 'ADAPTIVE_BANNER',
             position: 'BOTTOM_CENTER',
             margin: 72, // Sits cleanly above the bottom navigation bar
-            isTesting: true,
+            isTesting: false,
           });
         } catch (e) {
           console.warn('Banner error:', e);
@@ -5983,7 +5983,7 @@ const [playerName, setPlayerName] = useState(() => {
         try {
           await AdMob.prepareInterstitial({
             adId: AD_UNITS.QUIZ_INTERSTITIAL,
-            isTesting: true,
+            isTesting: false,
           });
           interstitialReady = true;
         } catch (e) {
@@ -6022,7 +6022,7 @@ const [playerName, setPlayerName] = useState(() => {
         try {
           await AdMob.prepareRewardVideoAd({
             adId: AD_UNITS.DOUBLE_XP_REWARDED,
-            isTesting: true,
+            isTesting: false,
           });
           rewardedReady = true;
         } catch (e) {
@@ -6079,6 +6079,7 @@ const [playerName, setPlayerName] = useState(() => {
   </script>
 </body>
 </html>
+
 
 
 

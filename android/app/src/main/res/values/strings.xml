@@ -4,5 +4,5 @@
   <string name="title_activity_main">VerbVibe</string>
   <string name="package_name">com.verbvibe.app</string>
   <string name="custom_url_scheme">com.verbvibe.app</string>
-  <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+  <string name="admob_app_id">ca-app-pub-8270398368993554~3343341333</string>
 </resources>
