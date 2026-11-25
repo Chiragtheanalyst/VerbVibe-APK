@@ -1,4 +1,4 @@
-name: Build VerbVibe Play Store AAB & Test APK
+﻿name: Build VerbVibe Play Store AAB & Test APK
 on:
   push:
     branches: [ main ]
@@ -26,6 +26,7 @@ jobs:
       - name: Install dependencies & sync Capacitor
         run: |
           npm install
+          node build-web.js
           npx cap sync android
 
       - name: Decode Release Keystore

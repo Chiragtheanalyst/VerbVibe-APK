@@ -2987,7 +2987,7 @@
       loop
       muted
       playsInline
-      preload={Math.abs(activeReelIdx - idx) <= 1 ? "auto" : "metadata"}
+      preload={Math.abs(activeReelIdx - idx) <= 1 ? "auto" : "none"}
       className="w-full h-full object-cover"
     />
     {/* Dark gradient overlay so text and UI overlays stay crisp */}
@@ -3979,7 +3979,7 @@
                       isDayActive ? 'bg-arcade-pink text-white shadow-[0_0_10px_#FF1744]' :
                       isToday ? 'border-2 border-dashed border-arcade-cyan text-arcade-cyan' : 'bg-black/40 text-slate-600'
                     }`}>
-                      {isDayActive ? '\uD83D\uDD25' : isToday ? '\u2B50' : '\u2022'}
+                      {isDayActive ? 'OK' : isToday ? '\u2022' : '\u00B7'}
                     </div>
                   </div>
                 );
@@ -3997,7 +3997,7 @@
                     : 'bg-gradient-to-r from-arcade-pink to-orange-500 text-white shadow-sm active:scale-95'
                 }`}
               >
-                <span>{isPracticedToday ? '\u2713 Practiced Today!' : '\uD83D\uDD25 Practice Today & Extend Streak (+25 XP)'}</span>
+                <span>{isPracticedToday ? 'Practiced Today' : 'Practice Today & Extend Streak (+25 XP)'}</span>
               </button>
             </div>
           </div>
@@ -4020,7 +4020,6 @@
 
             {blitzDone ? (
               <div className="mt-3 text-center p-4 rounded-2xl bg-black/40 border border-arcade-emerald/30 space-y-2">
-                <span className="text-3xl">{'\uD83C\uDF89'}</span>
                 <p className="text-sm font-bold text-arcade-emerald">
                   Daily Blitz Complete!
                 </p>
@@ -4029,7 +4028,6 @@
                 </p>
                 {blitzXpClaimed ? (
                   <div className="flex items-center justify-center gap-1.5 text-[11px] font-mono text-arcade-emerald">
-                    <span>{'\u2713'}</span>
                     <span>+{blitzFinalScore * 10 * blitzXpMultiplier} XP Claimed{blitzXpMultiplier === 2 ? ' (2x Bonus!)' : ''}</span>
                   </div>
                 ) : (
@@ -4040,7 +4038,6 @@
                         disabled={watchingDoubleXpAd}
                         className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 text-black text-xs font-black flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all mx-auto disabled:opacity-60"
                       >
-                        <Icon name="zap" size={14} color="#000"/>
                         <span>{watchingDoubleXpAd ? 'Loading Ad...' : 'Watch Ad for 2x XP (+' + (blitzFinalScore * 20) + ' XP)'}</span>
                       </button>
                     )}
@@ -4065,7 +4062,6 @@
                   onClick={startBlitz}
                   className="px-8 py-3 rounded-2xl bg-arcade-cyan text-black text-sm font-black flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all"
                 >
-                  <Icon name="zap" size={18} color="#000000"/>
                   <span>Start Blitz!</span>
                 </button>
               </div>
@@ -6071,11 +6067,13 @@ const [playerName, setPlayerName] = useState(() => {
         watchDoubleXp,
       };
 
-      document.addEventListener('deviceready', init, false);
-      window.addEventListener('load', init, false);
+      window.addEventListener('load', function () {
+        setTimeout(init, 1800);
+      }, false);
     })();
   </script>
 </body>
 </html>
+
 
 
