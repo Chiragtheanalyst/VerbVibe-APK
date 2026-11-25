@@ -5938,7 +5938,12 @@ const [playerName, setPlayerName] = useState(() => {
         const AdMob = getPlugin();
         if (!AdMob || initialized) return;
         try {
-          await AdMob.initialize({ initializeForTesting: true });
+          await AdMob.initialize({
+            initializeForTesting: false,
+            tagForChildDirectedTreatment: true,
+            tagForUnderAgeOfConsent: true,
+            maxAdContentRating: 'G',
+          });
           initialized = true;
           preloadInterstitial();
           preloadRewarded();
@@ -6074,6 +6079,7 @@ const [playerName, setPlayerName] = useState(() => {
   </script>
 </body>
 </html>
+
 
 
 
