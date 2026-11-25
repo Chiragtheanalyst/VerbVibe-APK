@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
 <script>
@@ -3795,6 +3795,25 @@
         } catch (e) { return false; }
       });
 
+      useEffect(() => {
+        if (window.VerbVibeAds) window.VerbVibeAds.showQuestsBanner();
+        return () => {
+          if (window.VerbVibeAds) window.VerbVibeAds.hideQuestsBanner();
+        };
+      }, []);
+
+      const [blitzXpMultiplier, setBlitzXpMultiplier] = useState(() => {
+        try {
+          const savedDate = localStorage.getItem('verbvibe_blitz_date');
+          if (savedDate === todayStr) {
+            return parseInt(localStorage.getItem('verbvibe_blitz_xp_mult') || '1', 10);
+          }
+          return 1;
+        } catch (e) { return 1; }
+      });
+
+      const [watchingDoubleXpAd, setWatchingDoubleXpAd] = useState(false);
+
       const [blitzXpClaimed, setBlitzXpClaimed] = useState(() => {
         try {
           const savedDate = localStorage.getItem('verbvibe_blitz_date');
@@ -3846,6 +3865,9 @@
           localStorage.setItem('verbvibe_blitz_done', 'true');
           localStorage.setItem('verbvibe_blitz_score', finalScore.toString());
         } catch (e) {}
+        if (window.VerbVibeAds) {
+          setTimeout(() => window.VerbVibeAds.showQuizInterstitial(), 500);
+        }
       };
 
       const handleBlitzAnswer = (idx) => {
@@ -3874,19 +3896,35 @@
         }, 800);
       };
 
-      const claimBlitzXp = () => {
+      const claimBlitzXp = (multiplier = 1) => {
         if (blitzXpClaimed) return;
-        const reward = blitzFinalScore * 10;
+        const reward = blitzFinalScore * 10 * multiplier;
         if (reward > 0) {
           setXp(prev => prev + reward);
           sfx.playGoalChime();
         }
+        setBlitzXpMultiplier(multiplier);
         setBlitzXpClaimed(true);
         if (trackTrophyAction) trackTrophyAction('questsCompleted', 1);
         try {
           localStorage.setItem('verbvibe_blitz_date', todayStr);
           localStorage.setItem('verbvibe_blitz_xp_claimed', 'true');
+          localStorage.setItem('verbvibe_blitz_xp_mult', multiplier.toString());
         } catch (e) {}
+      };
+
+      const handleWatchDoubleXp = async () => {
+        if (blitzXpClaimed || watchingDoubleXpAd || blitzFinalScore <= 0) return;
+        setWatchingDoubleXpAd(true);
+        try {
+          if (window.VerbVibeAds) {
+            await window.VerbVibeAds.watchDoubleXp(() => claimBlitzXp(2));
+          } else {
+            claimBlitzXp(2);
+          }
+        } finally {
+          setWatchingDoubleXpAd(false);
+        }
       };
 
       // Streak Calendar
@@ -3992,16 +4030,27 @@
                 {blitzXpClaimed ? (
                   <div className="flex items-center justify-center gap-1.5 text-[11px] font-mono text-arcade-emerald">
                     <span>{'\u2713'}</span>
-                    <span>+{blitzFinalScore * 10} XP Claimed</span>
+                    <span>+{blitzFinalScore * 10 * blitzXpMultiplier} XP Claimed{blitzXpMultiplier === 2 ? ' (2x Bonus!)' : ''}</span>
                   </div>
                 ) : (
-                  <button
-                    onClick={claimBlitzXp}
-                    className="mt-1 px-5 py-2 rounded-2xl bg-gradient-to-r from-arcade-emerald to-[#00b248] text-black text-xs font-black flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all mx-auto"
-                  >
-                    <Icon name="zap" size={14} color="#000"/>
-                    <span>Claim +{blitzFinalScore * 10} XP</span>
-                  </button>
+                  <div className="flex flex-col items-center gap-2 mt-2">
+                    {blitzFinalScore > 0 && (
+                      <button
+                        onClick={handleWatchDoubleXp}
+                        disabled={watchingDoubleXpAd}
+                        className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 text-black text-xs font-black flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all mx-auto disabled:opacity-60"
+                      >
+                        <Icon name="zap" size={14} color="#000"/>
+                        <span>{watchingDoubleXpAd ? 'Loading Ad...' : Watch Ad for 2x XP (+ XP)}</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => claimBlitzXp(1)}
+                      className="px-4 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-arcade-emerald border border-arcade-emerald/30 text-[11px] font-bold flex items-center justify-center gap-1 active:scale-95 transition-all mx-auto"
+                    >
+                      <span>Claim +{blitzFinalScore * 10} XP</span>
+                    </button>
+                  </div>
                 )}
                 <p className="text-[10px] text-slate-500 font-mono mt-1">
                   New quiz unlocks at midnight
@@ -5869,5 +5918,163 @@ const [playerName, setPlayerName] = useState(() => {
   setInterval(cleanVaultAndWireTenses, 600);
 })();
 </script>
+  <script>
+    (function () {
+      const AD_UNITS = {
+        QUESTS_BANNER: 'ca-app-pub-3940256099942544/9214589741',      // Adaptive Banner (Test)
+        QUIZ_INTERSTITIAL: 'ca-app-pub-3940256099942544/1033173712',  // Interstitial (Test)
+        DOUBLE_XP_REWARDED: 'ca-app-pub-3940256099942544/5224354917', // Rewarded Video (Test)
+      };
+
+      let initialized = false;
+      let interstitialReady = false;
+      let rewardedReady = false;
+      let lastInterstitialMs = 0;
+      const INTERSTITIAL_COOLDOWN_MS = 3 * 60 * 1000; // 3-minute cooldown
+
+      function getPlugin() {
+        return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.AdMob
+          ? window.Capacitor.Plugins.AdMob
+          : null;
+      }
+
+      async function init() {
+        const AdMob = getPlugin();
+        if (!AdMob || initialized) return;
+        try {
+          await AdMob.initialize({ initializeForTesting: true });
+          initialized = true;
+          preloadInterstitial();
+          preloadRewarded();
+        } catch (e) {
+          console.warn('AdMob init skipped:', e);
+        }
+      }
+
+      async function showQuestsBanner() {
+        await init();
+        const AdMob = getPlugin();
+        if (!AdMob || !initialized) return;
+        try {
+          await AdMob.showBanner({
+            adId: AD_UNITS.QUESTS_BANNER,
+            adSize: 'ADAPTIVE_BANNER',
+            position: 'BOTTOM_CENTER',
+            margin: 72, // Sits cleanly above the bottom navigation bar
+            isTesting: true,
+          });
+        } catch (e) {
+          console.warn('Banner error:', e);
+        }
+      }
+
+      async function hideQuestsBanner() {
+        const AdMob = getPlugin();
+        if (!AdMob || !initialized) return;
+        try {
+          await AdMob.removeBanner();
+        } catch (e) {}
+      }
+
+      async function preloadInterstitial() {
+        const AdMob = getPlugin();
+        if (!AdMob || !initialized) return;
+        try {
+          await AdMob.prepareInterstitial({
+            adId: AD_UNITS.QUIZ_INTERSTITIAL,
+            isTesting: true,
+          });
+          interstitialReady = true;
+        } catch (e) {
+          interstitialReady = false;
+        }
+      }
+
+      async function showQuizInterstitial() {
+        await init();
+        const AdMob = getPlugin();
+        if (!AdMob || !initialized) return;
+        if (!interstitialReady) {
+          preloadInterstitial();
+          return;
+        }
+        const now = Date.now();
+        if (now - lastInterstitialMs < INTERSTITIAL_COOLDOWN_MS) return;
+
+        try {
+          const handle = await AdMob.addListener('interstitialAdDismissed', () => {
+            if (handle && handle.remove) handle.remove();
+            interstitialReady = false;
+            preloadInterstitial();
+          });
+          lastInterstitialMs = now;
+          await AdMob.showInterstitial();
+        } catch (e) {
+          interstitialReady = false;
+          preloadInterstitial();
+        }
+      }
+
+      async function preloadRewarded() {
+        const AdMob = getPlugin();
+        if (!AdMob || !initialized) return;
+        try {
+          await AdMob.prepareRewardVideoAd({
+            adId: AD_UNITS.DOUBLE_XP_REWARDED,
+            isTesting: true,
+          });
+          rewardedReady = true;
+        } catch (e) {
+          rewardedReady = false;
+        }
+      }
+
+      async function watchDoubleXp(onRewarded) {
+        await init();
+        const AdMob = getPlugin();
+        // Fallback in browser preview where native AdMob isn't available
+        if (!AdMob || !initialized) {
+          if (typeof onRewarded === 'function') onRewarded();
+          return true;
+        }
+        if (!rewardedReady) {
+          await preloadRewarded();
+          if (!rewardedReady) return false;
+        }
+
+        let earned = false;
+        try {
+          const rewardHandle = await AdMob.addListener('onRewardedVideoAdReward', () => {
+            earned = true;
+            if (typeof onRewarded === 'function') onRewarded();
+          });
+          const dismissHandle = await AdMob.addListener('onRewardedVideoAdDismissed', () => {
+            if (rewardHandle && rewardHandle.remove) rewardHandle.remove();
+            if (dismissHandle && dismissHandle.remove) dismissHandle.remove();
+            rewardedReady = false;
+            preloadRewarded();
+          });
+          await AdMob.showRewardVideoAd();
+          return earned;
+        } catch (e) {
+          rewardedReady = false;
+          preloadRewarded();
+          return false;
+        }
+      }
+
+      window.VerbVibeAds = {
+        init,
+        showQuestsBanner,
+        hideQuestsBanner,
+        showQuizInterstitial,
+        watchDoubleXp,
+      };
+
+      document.addEventListener('deviceready', init, false);
+      window.addEventListener('load', init, false);
+    })();
+  </script>
 </body>
 </html>
+
