@@ -4041,7 +4041,7 @@
                         className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 text-black text-xs font-black flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all mx-auto disabled:opacity-60"
                       >
                         <Icon name="zap" size={14} color="#000"/>
-                        <span>{watchingDoubleXpAd ? 'Loading Ad...' : Watch Ad for 2x XP (+ XP)}</span>
+                        <span>{watchingDoubleXpAd ? 'Loading Ad...' : 'Watch Ad for 2x XP (+' + (blitzFinalScore * 20) + ' XP)'}</span>
                       </button>
                     )}
                     <button
@@ -6077,4 +6077,5 @@ const [playerName, setPlayerName] = useState(() => {
   </script>
 </body>
 </html>
+
 
