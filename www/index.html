@@ -3725,7 +3725,7 @@
       const [blitzCurrentQ, setBlitzCurrentQ] = useState(0);
       const [blitzScore, setBlitzScore] = useState(0);
       const [blitzAnswered, setBlitzAnswered] = useState(null);
-      const [blitzTimer, setBlitzTimer] = useState(30);
+      const [blitzTimer, setBlitzTimer] = useState(45);
 
       const [blitzDone, setBlitzDone] = useState(() => {
         try {
@@ -3796,7 +3796,7 @@
         setBlitzCurrentQ(0);
         setBlitzScore(0);
         setBlitzAnswered(null);
-        setBlitzTimer(30);
+        setBlitzTimer(45);
       };
 
       const finishBlitz = (finalScore) => {
@@ -3951,7 +3951,7 @@
                 <div>
                   <h4 className="text-sm font-bold text-white">Daily Grammar Blitz</h4>
                   <span className="text-[10px] text-arcade-cyan font-mono">
-                    {blitzDone ? 'Completed Today' : `${quizQuestions.length} Questions \u2022 30s Timer`}
+                    {blitzDone ? 'Completed Today' : `${quizQuestions.length} Questions \u2022 45s Timer`}
                   </span>
                 </div>
               </div>
@@ -3998,7 +3998,7 @@
             ) : !blitzStarted ? (
               <div className="mt-3 flex flex-col items-center gap-3">
                 <p className="text-xs text-slate-300 text-center">
-                  Answer {quizQuestions.length} verb tense questions in 30 seconds!
+                  Answer {quizQuestions.length} verb tense questions in 45 seconds!
                 </p>
                 <button
                   onClick={startBlitz}
@@ -4387,8 +4387,8 @@
       {
         badge: 'Quests Tab',
         title: 'Day Streak & Grammar Blitz',
-        desc: 'Open the Quests tab to check in and extend your Day Streak (+25 XP) and take on the Daily Grammar Blitz—a 30-second timed quiz to test your verb forms.',
-        highlight: 'Day Streak • 30s Grammar Blitz'
+        desc: 'Open the Quests tab to check in and extend your Day Streak (+25 XP) and take on the Daily Grammar Blitz—a 45-second timed quiz to test your verb forms.',
+        highlight: 'Day Streak • 45s Grammar Blitz'
       },
       {
         badge: 'Ranks & Trophies',
