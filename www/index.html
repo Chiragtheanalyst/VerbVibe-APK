@@ -2579,6 +2579,32 @@
         setActiveWordIdx(-1);
       }, [activeReelIdx]);
 
+      // Auto-pronounce active verb once when scrolled to a new reel
+      const lastAutoSpokenIdxRef = useRef(activeReelIdx);
+      useEffect(() => {
+        if (activeTab !== 'reels') return;
+        if (!isInitialScrollDone.current) {
+          lastAutoSpokenIdxRef.current = activeReelIdx;
+          return;
+        }
+        if (lastAutoSpokenIdxRef.current === activeReelIdx) return;
+        lastAutoSpokenIdxRef.current = activeReelIdx;
+
+        let enabled = true;
+        try {
+          enabled = localStorage.getItem('verbvibe_auto_pronounce') !== 'false';
+        } catch (e) {}
+        if (!enabled) return;
+
+        const speakTimer = setTimeout(() => {
+          if (typeof speakWord === 'function') {
+            speakWord();
+          }
+        }, 180);
+
+        return () => clearTimeout(speakTimer);
+      }, [activeReelIdx, activeTab]);
+
       // Instant Auto-Play when returning to Reels tab, pause when navigating away
       useEffect(() => {
         const container = containerRef.current;
@@ -4436,6 +4462,20 @@
         try { localStorage.setItem('verbvibe_voice_rate', r.toString()); } catch(e) {}
       };
 
+      const [autoPronounce, setAutoPronounce] = useState(() => {
+        try {
+          return localStorage.getItem('verbvibe_auto_pronounce') !== 'false';
+        } catch (e) { return true; }
+      });
+
+      const handleAutoPronounceToggle = (val) => {
+        setAutoPronounce(val);
+        try { localStorage.setItem('verbvibe_auto_pronounce', val ? 'true' : 'false'); } catch (e) {}
+        if (!val && 'speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+      };
+
       const handleVoiceURIChange = (uri) => {
         setSelectedVoiceURI(uri);
         try { 
@@ -5213,6 +5253,25 @@ const [playerName, setPlayerName] = useState(() => {
                     </div>
                   </div>
 
+                  {/* Auto-Pronounce on Scroll Toggle */}
+                  <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-bold text-slate-200">Auto-Pronounce on Scroll</div>
+                      <div className="text-[11px] text-slate-400">Pronounce each verb once when swiping reels</div>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={autoPronounce}
+                      onClick={() => handleAutoPronounceToggle(!autoPronounce)}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${autoPronounce ? 'bg-arcade-cyan' : 'bg-white/15'}`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${autoPronounce ? 'translate-x-5' : 'translate-x-0'}`}
+                      />
+                    </button>
+                  </div>
+
                   {/* Speech Rate Slider */}
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs text-slate-300">
@@ -5338,6 +5397,7 @@ const [playerName, setPlayerName] = useState(() => {
                       onClick={() => {
                         handleVoiceRateChange(0.88);
                         handleVoicePitchChange(1.0);
+                        handleAutoPronounceToggle(true);
                         const indianDefault = getActiveVoice();
                         const defaultUri = indianDefault ? (indianDefault.voiceURI || indianDefault.name) : '';
                         if (defaultUri) {

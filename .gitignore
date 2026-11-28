@@ -1,3 +1,9 @@
-﻿node_modules/
+node_modules/
 
 www/vendor/
+
+# Signing keys & local secrets
+*.jks
+*.keystore
+.env
+.env.*
