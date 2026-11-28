@@ -3189,18 +3189,44 @@
 
       const filteredVerbs = useMemo(() => {
         const now = Date.now();
-        return verbs.filter(v => {
+        const rawQuery = searchQuery.trim().toLowerCase();
+
+        const getVerbMatchScore = (v) => {
+          if (!rawQuery) return 1;
+          const formsList = [
+            v.verb,
+            v.forms?.base,
+            v.forms?.past,
+            v.forms?.continuous,
+            v.highlightWords?.base,
+            v.highlightWords?.past,
+            v.highlightWords?.continuous
+          ]
+            .filter(Boolean)
+            .map(s => s.trim().toLowerCase());
+
+          // Exact match on verb or any conjugated tense form (e.g., "eat", "ate", "eating")
+          if (formsList.some(f => f === rawQuery)) return 100;
+          // Prefix match on verb or any tense form (e.g., "ea" -> "Eat", "sle" -> "Sleep")
+          if (formsList.some(f => f.startsWith(rawQuery))) return 80;
+          return 0;
+        };
+
+        const matched = verbs.filter(v => {
           if (viewSavedOnly && !savedVerbIds[v.id]) return false;
           if (vaultFilter === 'mastered' && vaultProgress[v.id]?.status !== 'mastered') return false;
           if (vaultFilter === 'practicing' && vaultProgress[v.id]?.status !== 'practicing') return false;
           if (vaultFilter === 'due' && (!vaultProgress[v.id] || (vaultProgress[v.id]?.nextReview || 0) > now)) return false;
-          if (categoryFilter !== 'all' && v.category.toLowerCase() !== categoryFilter.toLowerCase()) return false;
-          if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase();
-            return v.verb.toLowerCase().includes(q) || v.definition.toLowerCase().includes(q) || v.forms.base.includes(q) || v.forms.past.includes(q);
-          }
-          return true;
+          if (categoryFilter !== 'all' && (v.category || '').toLowerCase() !== categoryFilter.toLowerCase()) return false;
+          return getVerbMatchScore(v) > 0;
         });
+
+        if (!rawQuery) return matched;
+
+        return matched
+          .map(v => ({ verb: v, score: getVerbMatchScore(v) }))
+          .sort((a, b) => b.score - a.score)
+          .map(item => item.verb);
       }, [verbs, savedVerbIds, viewSavedOnly, vaultFilter, vaultProgress, categoryFilter, searchQuery]);
 
       const handleGotIt = () => {
